@@ -1,7 +1,18 @@
 
 ![Group 1](https://user-images.githubusercontent.com/16545509/197299955-08663f6c-ca9b-49ea-bcf2-20a2a12a1bef.png)
 
-PowerKit is a generic way to implement UICollectionViewCompositionalLayout & UICollectionViewDiffableDataSource with more feature to save you're time 
+<p align="center">
+    <a href="https://swift.org/package-manager/"><img src="https://img.shields.io/badge/SPM-supported-Green.svg?style=flat"></a>
+</p>
+
+PowerKit is a generic way to implement UICollectionViewCompositionalLayout & UICollectionViewDiffableDataSource with more feature to save you're time, 
+and its use some of libraries to keep you'r work More **Power** 
+
+<p>
+  • <a href="https://github.com/Juanpe/SkeletonView">SkeletonView</a> Used For Download content Style <br>
+  • <a href="https://github.com/Moya/Moya">Moya</a> Used as network layer <br>
+  • <a href="https://github.com/SnapKit/SnapKit">SnapKit</a> Used For setup UI Constraint <br>
+</p>
 
 ## Contents
 
