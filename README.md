@@ -5,8 +5,7 @@
     <a href="https://swift.org/package-manager/"><img src="https://img.shields.io/badge/SPM-supported-Green.svg?style=flat"></a>
 </p>
 
-PowerKit is a generic way to implement UICollectionViewCompositionalLayout & UICollectionViewDiffableDataSource with more feature to save you're time, 
-and its use some of libraries to keep you'r work More **Power** 
+PowerKit is a generic way to implement UICollectionViewCompositionalLayout & UICollectionViewDiffableDataSource with more feature to save you're time, its use some of libraries to keep you'r work More **Power** , and you can using with ```WebService & Static List of data```
 
 <p>
   • <a href="https://github.com/Juanpe/SkeletonView">SkeletonView</a> Used For Download content Style <br>
@@ -20,6 +19,7 @@ and its use some of libraries to keep you'r work More **Power**
 - [Communication](#communication)
 - [Installation](#installation)
 - [Usage](#usage)
+    - [🔠 Model](#-Model) 
 
 ## Requirements
 
@@ -51,6 +51,9 @@ dependencies: [
 
 ## Usage
 
+This **PowerKit** divided into 4 paices of code to dealing with it 
+
+### 🔠 Model
 
 
 
