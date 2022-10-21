@@ -20,6 +20,9 @@ PowerKit is a generic way to implement UICollectionViewCompositionalLayout & UIC
 - [Installation](#installation)
 - [Usage](#usage)
     - [🔠 Model](#-Model) 
+    - [🎨 UIcollectionViewCell](#-UIcollectionViewCell) 
+    - [🏗 ViewModel](#-ViewModel)
+    - [🏢 ViewController](#-ViewController)
 
 ## Requirements
 
@@ -55,6 +58,16 @@ This **PowerKit** divided into 4 paices of code to dealing with it
 
 ### 🔠 Model
 
+
+### 🎨 UIcollectionViewCell
+
+
+
+### 🏗 ViewModel
+
+
+
+### 🏢 ViewController
 
 
 
