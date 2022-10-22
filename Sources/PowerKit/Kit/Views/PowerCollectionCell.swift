@@ -10,19 +10,19 @@ import UIKit
 import SkeletonView
 #endif
 
-public class PowerCollectionCell: UICollectionViewCell {
+open class PowerCollectionCell: UICollectionViewCell {
     
     //MARK: - LifeCycle
-    required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    required public init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.setupViews()
     }
     
-    public func setupViews(){
+    open func setupViews(){
     }
     
-    public func enableSkeletoneFor(_ views: [UIView]){
+    open func enableSkeletoneFor(_ views: [UIView]){
         views.forEach {
         #if canImport(SkeletonView)
             $0.isSkeletonable = true
