@@ -24,7 +24,7 @@ PowerKit is a generic way to implement UICollectionViewCompositionalLayout & UIC
     - [🏗 ViewModel](#-ViewModel)
     - [🏢 ViewController](#-ViewController)
 - [⚓️ Author](#Author)
-- [©️ CopyRight](#CopyRight)
+- [🪄 Sponsor](#Sponsor)
 - [🥋 License](#License)
 
 ## Requirements
@@ -261,9 +261,9 @@ extension DemoViewController {
 <a href="adelbios11@gmail.com"> Adel M. Radwan</a>
 
 
-## ©️ CopyRight
+## 🪄 Sponsor
  
- <a href="https://www.jeddah.gov.sa/english/index.php">Jeddah Municipality</a> All rights reserved 
+ <a href="https://www.jeddah.gov.sa/english/index.php">Jeddah Municipality</a> 
 
 ## 🥋 License
 
