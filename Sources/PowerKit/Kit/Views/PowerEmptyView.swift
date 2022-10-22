@@ -14,11 +14,11 @@ public class PowerEmptyView: PowerView  {
     //MARK: - Variables
     @Published private(set) var isActionButtonClicked: Bool?
     
-    enum LayoutPosition {
+    public enum LayoutPosition {
         case top, middle, bottom
     }
     
-    enum ViewType: String {
+    public enum ViewType: String {
         case empty = "EmptyData"
         case network = "noConnection"
     }
@@ -151,7 +151,7 @@ public class PowerEmptyView: PowerView  {
     }
     
     //MARK: - Configure
-    func configure(
+   open func configure(
         viewType: ViewType, layoutPosition: LayoutPosition = .middle,
         imageView: UIImage? = nil,
         title: String = "لاتوجد بيانات",
