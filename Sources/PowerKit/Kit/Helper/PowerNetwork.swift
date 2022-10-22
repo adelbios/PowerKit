@@ -10,7 +10,7 @@ import JGProgressHUD
 import Moya
 import Combine
 
-public class PowerNetwork: NSObject {
+open class PowerNetwork: NSObject {
     
     //MARK: - Variables
     enum RequestStatus { case loading, finished }
@@ -47,7 +47,7 @@ public class PowerNetwork: NSObject {
         self.isLoadingInBackground = isLoadingInBackground
     }
     
-    public func request(_ target: TargetType, at view: UIView? = nil, printOutResult: Bool = false, withProgress: Bool = false){
+    open func request(_ target: TargetType, at view: UIView? = nil, printOutResult: Bool = false, withProgress: Bool = false){
         self.printResultOut = printOutResult
         guard self.status == .finished else { return }
         self.status = .loading
@@ -55,7 +55,7 @@ public class PowerNetwork: NSObject {
         self.completeRequest(target)
     }
     
-    public func ignoreNetworkRequest() {
+    open func ignoreNetworkRequest() {
         self.status = .finished
     }
     

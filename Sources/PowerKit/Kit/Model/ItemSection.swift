@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct ItemSection {
+public struct ItemSection {
     
     let size: NSCollectionLayoutSize
     let cell: PowerCells

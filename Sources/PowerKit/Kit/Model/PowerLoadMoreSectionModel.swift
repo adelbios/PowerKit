@@ -7,11 +7,11 @@
 
 import UIKit
 
-public class PowerLoadMoreModel {
+open class PowerLoadMoreModel {
    
-    let alignment: NSRectAlignment
-    var cell: PowerCells?
-    var item: Item
+    public let alignment: NSRectAlignment
+    open  var cell: PowerCells?
+    open var item: Item
     
     init(alignment: NSRectAlignment, cell: PowerCells? = nil, item: Item) {
         self.alignment = alignment
@@ -25,7 +25,7 @@ public class PowerLoadMoreModel {
         }
     }
     
-    public class Item: Hashable {
+    open class Item: Hashable {
         var currentPage: Int
         var lastPage: Int
         

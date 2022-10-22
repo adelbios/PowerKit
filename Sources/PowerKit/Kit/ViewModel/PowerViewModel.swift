@@ -60,11 +60,11 @@ open class PowerViewModel<T: Codable>: NSObject {
     
     
     //MARK: - Netwrok Variables
-    public var isLoadingInBackground: Bool {
+    open var isLoadingInBackground: Bool {
         return false
     }
     
-    public lazy var network: PowerNetwork = {
+    open lazy var network: PowerNetwork = {
         let network = PowerNetwork(subscription: self.subscription, isLoadingInBackground: isLoadingInBackground)
         return network
     }()
@@ -80,36 +80,36 @@ open class PowerViewModel<T: Codable>: NSObject {
     
     
     //MARK: - Override functions
-    public func showAlertForNoInternetConnection(title: String, message: String) {
+    open func showAlertForNoInternetConnection(title: String, message: String) {
         
     }
     
-    @objc public dynamic func configureViewModelSettings() {
+    @objc open dynamic func configureViewModelSettings() {
     }
     
-    public dynamic func handlePowerCellAction() {
+    open func handlePowerCellAction() {
     }
     
-    public func didFetchModels(_ model: T) {
+    open func didFetchModels(_ model: T) {
     }
     
-    public func makeHTTPRequest(){
+    open func makeHTTPRequest(){
         self.requestType = .get
     }
     
-    public func postRequestAt(_ view: UIView) {
+    open func postRequestAt(_ view: UIView) {
         self.requestType = .post
     }
     
-    public func fetchStaticData(){
+    open func fetchStaticData(){
         self.network.ignoreNetworkRequest()
     }
     
     //MARK: - Paging request
-    func fetchNextPaging(){
+    open func fetchNextPaging(){
     }
     
-    public func increaseCurrentPage(forSection: Int) -> Int? {
+    open func increaseCurrentPage(forSection: Int) -> Int? {
         guard let model = fetchLoadMoreModel(forSection: forSection) else { return nil }
         let page = model.currentPage + 1
         guard model.lastPage > page else { return nil }
@@ -117,7 +117,7 @@ open class PowerViewModel<T: Codable>: NSObject {
         return page
     }
     
-    public func updateLoadMore(forSection: Int, currentPage: Int? = nil, lastPage: Int? = nil) {
+    open func updateLoadMore(forSection: Int, currentPage: Int? = nil, lastPage: Int? = nil) {
         guard self.powerItemsModel.isEmpty == false else { return }
         guard let model = self.powerItemsModel[forSection].loadMoreSection else { return }
         if let currentPage {

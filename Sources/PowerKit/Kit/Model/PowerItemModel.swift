@@ -8,21 +8,21 @@
 import UIKit
 
 
-public class PowerItemModel {
+open class PowerItemModel {
     
     final let section: Int
     final let registeredCells: [RegisteredCellsModel]
-    var itemSection: ItemSection?
-    var loadMoreSection: PowerLoadMoreModel?
-    var emptyCell: PowerCells?
-    var layout: NSCollectionLayoutSection!
-    var item = [PowerCells]()
+    open var itemSection: ItemSection?
+    open var loadMoreSection: PowerLoadMoreModel?
+    open var emptyCell: PowerCells?
+    open var layout: NSCollectionLayoutSection!
+    open var item = [PowerCells]()
     
-    var isItemVisible: Bool = true
-    var boundarySupplementaryItem = [NSCollectionLayoutBoundarySupplementaryItem]()
+    open var isItemVisible: Bool = true
+    open var boundarySupplementaryItem = [NSCollectionLayoutBoundarySupplementaryItem]()
     
     //MARK: - .init
-    init(
+     init(
         section: Int, itemSection: ItemSection? = nil, loadMoreSection: PowerLoadMoreModel? = nil,
         emptyCell: PowerCells? = nil, layout: LayoutKind, registeredCells: [RegisteredCellsModel]
     ) {
@@ -47,7 +47,7 @@ public class PowerItemModel {
     }
     
     //MARK: - Check For Layout Kind
-    enum LayoutKind: Hashable, Equatable {
+    public enum LayoutKind: Hashable, Equatable {
         case vertical
         case horizontal
         case grid(numberOfItemPerRows: Int)
@@ -95,7 +95,7 @@ extension PowerItemModel: Hashable {
 }
 
 //MARK: - Create Item Section
-extension PowerItemModel {
+public extension PowerItemModel {
     
     func create(_ itemSection: 
                 ItemSection) -> NSCollectionLayoutBoundarySupplementaryItem {
