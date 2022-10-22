@@ -208,6 +208,49 @@ just override these function and call it in parent ```viewController``` And take
 
 ### 🏢 ViewController
 
+The Master of ```PowerKit``` to be working just make yo're ```ViewController``` inherit of PowerViewController and pass the ```Model``` and ```ViewModel``` to it 
 
+```swift 
+import UIKit
+import PowerKit
 
+class DemoViewController: PowerViewController<DemoModel, DemoViewModel> {
+    
+    //MARK: - LifeCycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        settings()
+        setupUI()
+        viewModel.fetchStaticData()
+    }
+    
+    override func settingConfigure() {
+        powerSettings.isPullToRefreshUsed = true
+        powerSettings.loadContentType = .skeleton
+    }
+    
+    override func showAlertForNoInternetConnection(title: String, message: String) {
+    }
+    
+}
+
+//MARK: - Settings
+extension DemoViewController {
+    
+    func settings() {
+        collectionView.setInsit(.zero)
+        setBackground(color: .white)
+        collectionView.emptyView.configure(
+            viewType: .empty,
+            layoutPosition: .middle,
+            message: "Empty Data message"
+        )
+    }
+    
+    func setupUI() {
+        setupCollectionViewConstraint(padding: .zero)
+    }
+    
+}
+```
 
