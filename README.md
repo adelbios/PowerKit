@@ -56,11 +56,52 @@ dependencies: [
 
 This **PowerKit** divided into 4 paices of code to dealing with it 
 
+```swift
+import PowerKit
+```
+
 ### 🔠 Model
+
+Create struct or class model that implement   ```Codable``` & ```Hashable``` protocols, Because we mentioned we use ```UICollectionViewDiffableDataSource```
+
+```swift
+struct DemoModel: Codable, Hashable {
+    let title: String
+    let message: String
+}
+```
 
 
 ### 🎨 UIcollectionViewCell
+Create ```UICollectionViewCell``` that inherit from ```PowerCollectionCell``` and implement ```PowerCellDelegate``` to pass data from viewModel into cell
 
+```swift 
+import UIKit
+import PowerKit
+
+class DemoCell: PowerCollectionCell {
+    
+    //MARK: - LifeCycle 
+    override func setupViews() {
+      /*
+      Called what did you want here, don't forget add UI Component into contentView** rather than self,
+      becuase SekeletonView Layer works only with contentView
+      */
+      //Call this function to enable SkeletonView animation layer for loading content
+      enableSkeletoneFor([self, stackView, titleLabel, messageLabel, ...etc])
+    }
+
+}
+//MARK: - PowerCellDelegate
+extension DemoCell: PowerCellDelegate {
+    
+    func configure(data: DemoModel) {
+        titleLabel.text = data.title
+        messageLabel.text = data.message
+    }
+}
+
+```
 
 
 ### 🏗 ViewModel
