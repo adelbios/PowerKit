@@ -106,7 +106,105 @@ extension DemoCell: PowerCellDelegate {
 
 ### 🏗 ViewModel
 
+Create new ```ViewModel``` that inherit from ```PowerViewModel``` but set data type to it, this new ```viewModel``` can be work with static data and webservice 
 
+#### 1/ work with static data 
+
+```swift 
+import UIKit
+import PowerKit
+
+class DemoViewModel: PowerViewModel<DemoModel> {
+    
+    //MARK: - Variables
+    private enum Cells {
+        typealias main = PowerModel<DemoCell, DemoModel>
+    }
+    
+    //MARK: - Fetch Data from Internal
+    override func fetchStaticData() {
+        super.fetchStaticData()
+         self.addNew(items: [
+            Cells.main(item: .init(title: "Title A", message: "Message A")),
+            Cells.main(item: .init(title: "Title B", message: "Message B")),
+            Cells.main(item: .init(title: "Title C", message: "Message C")),
+         ], forSection: 0)
+    }
+    
+    override func configureViewModelSettings() {
+        settings()
+    }
+    
+    override func handlePowerCellAction() {
+        handleCellsAction()
+    }
+    
+}
+
+//MARK: - Helper
+extension DemoViewModel {
+    
+    func handleCellsAction() {
+        action.on(.didSelect) { (model: Cells.main, cell, indexPath) in
+            guard let model = model.item as? DemoModel else { return }
+            //Ue can push, present || dismiss using self.viewController, becase each viewMode have viewController
+            log(type: .success, model.title)
+        }
+        
+    }
+    
+    func settings() {
+        self.add(settings: [
+            .init(
+                section: 0,
+                layout: .vertical,
+                registeredCells: [.init(cell: DemoCell.self, skeletonCount: 10)]
+            )
+        ])
+    }
+
+}
+
+```
+#### 2/ work with WebService 
+
+just override these function and call it in parent ```viewController``` And take a look at the <a href="https://github.com/Moya/Moya">Moya</a> to figure out how you can create target for web service
+
+
+```swift 
+    //If  you want run request in background or not , default value is false
+    override var isLoadingInBackground: Bool {
+        return true
+    }
+    
+    //MARK: - Make Https request
+    override func makeHTTPRequest() {
+        super.makeHTTPRequest()
+        //network.request(target: TargetType)
+    }
+    
+    //MARK: - Post Request
+    override func postRequestAt(_ view: UIView) {
+        super.postRequestAt(view)
+        //network.request(target: TargetType, at: view, printOutResult: true, withProgress: true)
+    }
+    
+    //MARK: - Fetch Next paging
+    override func fetchNextPaging() {
+        super.fetchNextPaging()
+        //guard let page = increaseCurrentPage(forSection: 0) else { return }
+        //network.request(DocumentsTarget.dummyAPI(page: page))
+    }
+    
+    //MARK: - DidFetch Data Success
+    override func didFetchModels(_ model: DemoModel) {
+        //let cells = model.map({ Cells.main(item: $0) })
+        //self.updateLoadMore(forSection: 1 lastPage: 100)
+        //self.addNew(items: [cells], forSection: 0)
+    }
+
+
+```
 
 ### 🏢 ViewController
 
