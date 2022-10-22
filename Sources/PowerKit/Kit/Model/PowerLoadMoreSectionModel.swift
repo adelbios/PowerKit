@@ -29,7 +29,7 @@ open class PowerLoadMoreModel {
         var currentPage: Int
         var lastPage: Int
         
-        init(currentPage: Int, lastPage: Int) {
+        public init(currentPage: Int, lastPage: Int) {
             self.currentPage = currentPage
             self.lastPage = lastPage
         }
