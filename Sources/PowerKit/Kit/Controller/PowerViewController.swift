@@ -12,18 +12,18 @@ fileprivate typealias diffable = PowerDiffableDataSource<Int, AnyHashable>
 fileprivate typealias snapshots = NSDiffableDataSourceSnapshot<Int, AnyHashable>
 
 
-public class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, UICollectionViewDelegate,
+open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, UICollectionViewDelegate,
                                                                 UICollectionViewDataSourcePrefetching {
     
     //MARK: - Variables
-    public var powerSettings = PowerSettings()
+    open var powerSettings = PowerSettings()
     
-    public var viewModel = Z()
+    open var viewModel = Z()
     
     private var diffableDataSource: diffable?
     
     //MARK: - UI Variables
-    lazy var collectionView: PowerCollectionView = {
+    open lazy var collectionView: PowerCollectionView = {
         let collectionView = PowerCollectionView(frame: .zero, collectionViewLayout: viewModel.createCollectionViewLayout())
         collectionView.delegate = self
         collectionView.backgroundColor = .white
@@ -39,7 +39,7 @@ public class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController
     
     
     //MARK: - LifeCycle
-    public override func viewDidLoad() {
+    open override func viewDidLoad() {
         settingConfigure()
         super.viewDidLoad()
         settings()
@@ -55,10 +55,10 @@ public class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController
     }
     
     //MARK: - Override func
-    func settingConfigure() {
+    open func settingConfigure() {
     }
     
-    public func showAlertForNoInternetConnection(title: String, message: String) {
+    open func showAlertForNoInternetConnection(title: String, message: String) {
         
     }
     
@@ -75,19 +75,19 @@ public class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController
         didDeSelect(indexPath: indexPath)
     }
     
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    open func scrollViewDidScroll(_ scrollView: UIScrollView) {
     }
     
     /// Change color for both self.view & self.collectionView
     /// - Parameter color: New Color
-    func setBackground(color: UIColor) {
+    open func setBackground(color: UIColor) {
         self.collectionView.backgroundColor = color
         self.view.backgroundColor = color
     }
     
     /// To Fill Collection View to subView
     /// - Parameter padding: To add margin to constraint
-    func setupCollectionViewConstraint(padding: UIEdgeInsets = .zero) {
+    open func setupCollectionViewConstraint(padding: UIEdgeInsets = .zero) {
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(padding.top)

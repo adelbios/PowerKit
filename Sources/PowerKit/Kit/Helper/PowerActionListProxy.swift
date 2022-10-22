@@ -48,18 +48,18 @@ public enum PowerCellsAction: Hashable {
     
 }
 
-public class PowerActionListProxy {
+open class PowerActionListProxy {
     
     private var actions = [String: ((PowerCells, UIView, IndexPath) -> Void)]()
     
-    func invoke(action: PowerCellsAction, cell: UIView, configurator: PowerCells, indexPath: IndexPath) {
+    open func invoke(action: PowerCellsAction, cell: UIView, configurator: PowerCells, indexPath: IndexPath) {
         let key = "\(action.hashValue)\(type(of: configurator).cellId)"
         guard let action = self.actions[key] else { return }
         action(configurator, cell, indexPath)
     }
     
     @discardableResult
-    func on<CellType, DataType>(_ action: PowerCellsAction, handler: @escaping ((PowerModel<CellType, DataType>, UIView, IndexPath) -> Void)) -> Self {
+    open func on<CellType, DataType>(_ action: PowerCellsAction, handler: @escaping ((PowerModel<CellType, DataType>, UIView, IndexPath) -> Void)) -> Self {
         let key = "\(action.hashValue)\(CellType.reuseIdentifier)"
         self.actions[key] = { list, cell, indexPath in
             

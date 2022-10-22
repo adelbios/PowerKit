@@ -8,14 +8,14 @@
 import UIKit
 
 
-struct RegisteredCellsModel {
+public struct RegisteredCellsModel {
     
-    let cell: UICollectionViewCell.Type
-    let fromNib: Bool
-    let skeletonCount: Int
-    let header: Header?
+    public let cell: UICollectionViewCell.Type
+    public let fromNib: Bool
+    public let skeletonCount: Int
+    public let header: Header?
     
-    init(cell: UICollectionViewCell.Type, fromNib: Bool = false, skeletonCount: Int = 2, header: Header? = nil) {
+    public init(cell: UICollectionViewCell.Type, fromNib: Bool = false, skeletonCount: Int = 2, header: Header? = nil) {
         self.cell = cell
         self.fromNib = fromNib
         self.skeletonCount = skeletonCount

@@ -22,7 +22,7 @@ open class PowerItemModel {
     open var boundarySupplementaryItem = [NSCollectionLayoutBoundarySupplementaryItem]()
     
     //MARK: - .init
-     init(
+    public init(
         section: Int, itemSection: ItemSection? = nil, loadMoreSection: PowerLoadMoreModel? = nil,
         emptyCell: PowerCells? = nil, layout: LayoutKind, registeredCells: [RegisteredCellsModel]
     ) {

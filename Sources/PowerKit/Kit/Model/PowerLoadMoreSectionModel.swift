@@ -13,7 +13,7 @@ open class PowerLoadMoreModel {
     open  var cell: PowerCells?
     open var item: Item
     
-    init(alignment: NSRectAlignment, cell: PowerCells? = nil, item: Item) {
+    public init(alignment: NSRectAlignment, cell: PowerCells? = nil, item: Item) {
         self.alignment = alignment
         self.cell = cell
         self.item = item

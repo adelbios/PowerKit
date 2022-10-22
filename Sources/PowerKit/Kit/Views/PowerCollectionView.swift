@@ -7,19 +7,19 @@
 
 import UIKit
 
-class PowerCollectionView: UICollectionView {
+open class PowerCollectionView: UICollectionView {
     
     //MARK: - Variables
-    let emptyView = PowerEmptyView()
+    public let emptyView = PowerEmptyView()
     
-    enum BackgroundViewMode {
+    public enum BackgroundViewMode {
         case error
         case empty
         case without
     }
     
     //MARK: - LifeCycle
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -30,7 +30,7 @@ class PowerCollectionView: UICollectionView {
 }
 
 //MARK: - Puplic Settings
-extension PowerCollectionView {
+public extension PowerCollectionView {
 
     
     func setBackgroundUsing(mode: BackgroundViewMode) {

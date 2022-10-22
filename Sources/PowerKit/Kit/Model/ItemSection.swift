@@ -9,11 +9,11 @@ import UIKit
 
 public struct ItemSection {
     
-    let size: NSCollectionLayoutSize
-    let cell: PowerCells
-    let pinToVisibleBounds: Bool
+    public let size: NSCollectionLayoutSize
+    public let cell: PowerCells
+    public let pinToVisibleBounds: Bool
    
-    init(size: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(70)),
+    public init(size: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(70)),
          cell: PowerCells,
          pinToVisibleBounds: Bool = false
     ) {

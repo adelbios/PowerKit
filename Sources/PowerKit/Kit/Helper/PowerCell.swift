@@ -17,16 +17,16 @@ public protocol PowerCellDelegate {
 }
 
 
-public class PowerModel<CellType: PowerCellDelegate, DataType: Hashable>: PowerCells where CellType.DataType == DataType, CellType: UICollectionViewCell {
+open class PowerModel<CellType: PowerCellDelegate, DataType: Hashable>: PowerCells where CellType.DataType == DataType, CellType: UICollectionViewCell {
   
-    var otherItem: Any?
+    open var otherItem: Any?
    
     static override var cellId: String {
         return CellType.name
     }
     
     
-    init(item: DataType, otherItem: Any? = nil) {
+    public init(item: DataType, otherItem: Any? = nil) {
         super.init()
         self.item = item
         self.otherItem = otherItem
@@ -61,10 +61,10 @@ private protocol PowerDelegate {
 }
 
 
-public class PowerCells: PowerDelegate, Hashable, Equatable   {
+open class PowerCells: PowerDelegate, Hashable, Equatable   {
     
-    var item: AnyHashable!
-    var cell: UICollectionViewCell!
+    open var item: AnyHashable!
+    open var cell: UICollectionViewCell!
   
     class var cellId: String {
         return ""
