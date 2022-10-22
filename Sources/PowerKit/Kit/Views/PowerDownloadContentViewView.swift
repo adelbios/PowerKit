@@ -7,22 +7,22 @@
 
 import UIKit
 
-public class PowerDownloadContentViewView: UIView {
+open class PowerDownloadContentViewView: UIView {
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
     }
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     
-    func startAnimation() {
+    open func startAnimation() {
         self.alpha = 1
     }
     
-    func stopAnimation() {
+    open func stopAnimation() {
         UIViewPropertyAnimator(duration: 0.5, curve: .easeInOut) {
             self.alpha = 0
         }.startAnimation()

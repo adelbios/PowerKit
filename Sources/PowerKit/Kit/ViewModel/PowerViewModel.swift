@@ -8,21 +8,21 @@
 import UIKit
 import Combine
 
-public class PowerViewModel<T: Codable>: NSObject {
+open class PowerViewModel<T: Codable>: NSObject {
     
     //MARK: - Public Variables
-    public var subscription = Set<AnyCancellable>()
+    open var subscription = Set<AnyCancellable>()
     
-    public weak var viewController: UIViewController?
+    open weak var viewController: UIViewController?
     
-    public var action = PowerActionListProxy()
+    open var action = PowerActionListProxy()
     
-    public var isPowerItemsModelEmpty: Bool {
+    open var isPowerItemsModelEmpty: Bool {
         let items = self.powerItemsModel.map({ $0.item }).map { $0.isEmpty }.filter { $0 == false }
         return items.isEmpty
     }
     
-    public var spaceBetweenSections: CGFloat {
+    open var spaceBetweenSections: CGFloat {
         return 16
     }
     
@@ -70,7 +70,7 @@ public class PowerViewModel<T: Codable>: NSObject {
     }()
     
     //MARK: - LifeCycle
-    required override init() {
+    required public override init() {
         super.init()
         configureViewModelSettings()
         didSuccessFetchData()
@@ -109,7 +109,7 @@ public class PowerViewModel<T: Codable>: NSObject {
     func fetchNextPaging(){
     }
     
-    func increaseCurrentPage(forSection: Int) -> Int? {
+    public func increaseCurrentPage(forSection: Int) -> Int? {
         guard let model = fetchLoadMoreModel(forSection: forSection) else { return nil }
         let page = model.currentPage + 1
         guard model.lastPage > page else { return nil }
@@ -117,7 +117,7 @@ public class PowerViewModel<T: Codable>: NSObject {
         return page
     }
     
-    func updateLoadMore(forSection: Int, currentPage: Int? = nil, lastPage: Int? = nil) {
+    public func updateLoadMore(forSection: Int, currentPage: Int? = nil, lastPage: Int? = nil) {
         guard self.powerItemsModel.isEmpty == false else { return }
         guard let model = self.powerItemsModel[forSection].loadMoreSection else { return }
         if let currentPage {

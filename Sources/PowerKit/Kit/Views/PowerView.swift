@@ -10,18 +10,18 @@ import UIKit
 import SkeletonView
 #endif
 
-public class PowerView: UIView {
+open class PowerView: UIView {
 
     
     //MARK: - LifeCycle
-    required init?(coder aDecoder: NSCoder) { fatalError() }
+    required public init?(coder aDecoder: NSCoder) { fatalError() }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
     }
     
-    public func enableSkeletoneFor(_ views: [UIView]){
+    open func enableSkeletoneFor(_ views: [UIView]){
         views.forEach {
             #if canImport(SkeletonView)
             $0.isSkeletonable = true
@@ -29,7 +29,7 @@ public class PowerView: UIView {
         }
     }
     
-    @objc public dynamic func setupViews() {
+    @objc open dynamic func setupViews() {
         self.backgroundColor = .white
     }
     

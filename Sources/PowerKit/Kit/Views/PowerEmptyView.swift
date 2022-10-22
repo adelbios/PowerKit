@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-public class PowerEmptyView: PowerView {
+public class PowerEmptyView: PowerView  {
     
     
     //MARK: - Variables

@@ -7,28 +7,28 @@
 
 import UIKit
 
-public class PowerEmptyCell: PowerCollectionCell {
+open class PowerEmptyCell: PowerCollectionCell {
     
     //MARK: - Variables
-    public var titleFont: UIFont = UIFont.systemFont(ofSize: 18) {
+    open var titleFont: UIFont = UIFont.systemFont(ofSize: 18) {
         didSet {
             self.titleLabel.font = self.titleFont
         }
     }
     
-    public var messageFont: UIFont = UIFont.systemFont(ofSize: 12) {
+    open var messageFont: UIFont = UIFont.systemFont(ofSize: 12) {
         didSet {
             self.messageLabel.font = self.messageFont
         }
     }
     
-    public var titleColor: UIColor = UIColor.systemGray {
+    open var titleColor: UIColor = UIColor.systemGray {
         didSet {
             self.titleLabel.textColor = self.titleColor
         }
     }
     
-    public var messageColor: UIColor = UIColor.systemGray2 {
+    open var messageColor: UIColor = UIColor.systemGray2 {
         didSet {
             self.titleLabel.textColor = self.messageColor
         }
