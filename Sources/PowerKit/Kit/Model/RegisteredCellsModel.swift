@@ -22,12 +22,14 @@ public struct RegisteredCellsModel {
         self.header = header
     }
     
+    //MARK: - Header
     public struct Header {
-        let header: UICollectionViewCell.Type
-        let fromNib: Bool
-        let kind = UICollectionView.elementKindSectionHeader
         
-        init(_ header: UICollectionViewCell.Type, fromNib: Bool = false) {
+        public let header: UICollectionViewCell.Type
+        public let fromNib: Bool
+        public let kind = UICollectionView.elementKindSectionHeader
+        
+        public init(_ header: UICollectionViewCell.Type, fromNib: Bool = false) {
             self.header = header
             self.fromNib = fromNib
         }
