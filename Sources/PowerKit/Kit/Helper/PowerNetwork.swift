@@ -33,7 +33,7 @@ open class PowerNetwork: NSObject {
     
     @Published private(set) var data: Data?
     
-    @Published private(set) var requestProgress: Progress?
+    @Published open var requestProgress: Progress?
     
     @Published private(set) var networkErrorModel: PowerNetworkErrorLoadingModel?
     
