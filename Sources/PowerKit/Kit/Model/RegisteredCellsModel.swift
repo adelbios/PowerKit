@@ -15,7 +15,7 @@ public struct RegisteredCellsModel {
     public let skeletonCount: Int
     public let header: Header?
     
-    public init(cell: UICollectionViewCell.Type, fromNib: Bool = false, skeletonCount: Int = 2, header: Header? = nil) {
+    public init(cell: UICollectionViewCell.Type, fromNib: Bool = false, skeletonCount: Int = 0, header: Header? = nil) {
         self.cell = cell
         self.fromNib = fromNib
         self.skeletonCount = skeletonCount

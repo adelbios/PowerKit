@@ -14,6 +14,7 @@ import SkeletonView
 class PowerDiffableDataSource<Section: Hashable, Item: Hashable>: UICollectionViewDiffableDataSource<Section, Item> {
     
     private var registeredCells = [RegisteredCellsModel]()
+    private var skeletoneCells = [RegisteredCellsModel]()
     
     //MARK: - .init
     init(
@@ -21,7 +22,8 @@ class PowerDiffableDataSource<Section: Hashable, Item: Hashable>: UICollectionVi
         cellProvider: @escaping UICollectionViewDiffableDataSource<Section, Item>.CellProvider
     ) {
         super.init(collectionView: collectionView, cellProvider: cellProvider)
-        self.registeredCells = registeredCells.filter({ $0.skeletonCount > 0 })
+        self.registeredCells = registeredCells
+        self.skeletoneCells = registeredCells.filter({ $0.skeletonCount > 0 })
         self.registerAllCellsUsing(collectionView)
     }
     
@@ -31,16 +33,16 @@ class PowerDiffableDataSource<Section: Hashable, Item: Hashable>: UICollectionVi
 extension PowerDiffableDataSource: SkeletonCollectionViewDataSource {
     
     func numSections(in collectionSkeletonView: UICollectionView) -> Int {
-        return registeredCells.count
+        return skeletoneCells.count
     }
     
     func collectionSkeletonView(_ skeletonView: UICollectionView, cellIdentifierForItemAt indexPath: IndexPath) -> ReusableCellIdentifier {
-        return registeredCells[indexPath.section].cell.name
+        return skeletoneCells[indexPath.section].cell.name
     }
     
     
     func collectionSkeletonView(_ skeletonView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return registeredCells[section].skeletonCount
+        return skeletoneCells[section].skeletonCount
     }
 }
 #endif
