@@ -10,7 +10,7 @@ import UIKit
 
 extension JSONDecoder {
     
-    func implement<T:Decodable>(useKeyDecodingStrategy: Bool = true, type: T.Type, data: Data,_ completion:(_ s: T)->() = { _ in }){
+    func implement<T:Decodable>(useKeyDecodingStrategy: Bool = false, type: T.Type, data: Data,_ completion:(_ s: T)->() = { _ in }){
         if useKeyDecodingStrategy == true {
             self.keyDecodingStrategy = .convertFromSnakeCase
         }
