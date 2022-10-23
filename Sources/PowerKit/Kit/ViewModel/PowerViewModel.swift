@@ -11,6 +11,8 @@ import Combine
 open class PowerViewModel<T: Codable>: NSObject {
     
     //MARK: - Public Variables
+    public let json = JSONDecoder()
+    
     open var subscription = Set<AnyCancellable>()
     
     open weak var viewController: UIViewController?
@@ -30,7 +32,6 @@ open class PowerViewModel<T: Codable>: NSObject {
     private(set) var powerItemsModel = [PowerItemModel]()
     private(set) var registeredCellsModel = [RegisteredCellsModel]()
     
-    private let json = JSONDecoder()
     private var requestType: RequestType = .get
     
     private var errorModelInsertion: ErrorModelInsertion? {
@@ -90,7 +91,7 @@ open class PowerViewModel<T: Codable>: NSObject {
     open func handlePowerCellAction() {
     }
     
-    open func didFetchModels(_ model: T) {
+    open func didFetchModels(_ model: T, data: Data) {
     }
     
     open func makeHTTPRequest(){
