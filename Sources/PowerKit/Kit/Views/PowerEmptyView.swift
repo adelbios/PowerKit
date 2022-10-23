@@ -142,7 +142,6 @@ public class PowerEmptyView: PowerView  {
     public override func setupViews() {
         settings()
         setupUI()
-        playAnimation()
     }
     
     public override func layoutSubviews() {
@@ -238,6 +237,7 @@ extension PowerEmptyView {
         let animation = LottieAnimation.named(fileName)
         self.animationView.animation = animation
         self.animationView.reloadImages()
+        self.playAnimation()
     }
     
     
