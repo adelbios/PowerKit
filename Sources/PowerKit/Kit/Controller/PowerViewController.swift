@@ -58,7 +58,7 @@ open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, 
     open func settingConfigure() {
     }
     
-    open func showAlertForNoInternetConnection(title: String, message: String) {
+    open func showAlertForInternetConnectionError(title: String, message: String) {
         
     }
     
@@ -312,7 +312,7 @@ private extension PowerViewController {
             let arMessage = "يبدو انه لايوجد إتصال بالإنترنت تاكد من اتصالك من خلال الشبكة الخلوية او شبكة WI-FI"
             let title = model == nil ? arTitle : model!.description
             let message = model == nil ? arMessage : model!.message
-            self.showAlertForNoInternetConnection(title: title, message: message)
+            self.showAlertForInternetConnectionError(title: title, message: message)
             self.collectionView.termnatePullToRefresh()
         }
     }

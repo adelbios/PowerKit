@@ -81,7 +81,7 @@ open class PowerViewModel<T: Codable>: NSObject {
     
     
     //MARK: - Override functions
-    open func showAlertForNoInternetConnection(title: String, message: String) {
+    open func showAlertForInternetConnectionError(title: String, message: String) {
         
     }
     
@@ -316,7 +316,7 @@ private extension PowerViewModel {
             .sink { [weak self] data in
                 guard let self = self else { return }
                 self.json.implement(useKeyDecodingStrategy: false, type: T.self, data: data){
-                    self.didFetchModels($0)
+                    self.didFetchModels($0, data: data)
                     self.didRequestCompleteEvent = true
                 }
             }.store(in: &subscription) // Store subscripton to cancelled when dienit calling
@@ -383,7 +383,7 @@ private extension PowerViewModel {
             .compactMap{ $0 }
             .sink { model in
                 guard self.requestType == .post else { return }
-                self.showAlertForNoInternetConnection(title: model.description, message: model.message)
+                self.showAlertForInternetConnectionError(title: model.description, message: model.message)
             }.store(in: &subscription)
     }
     
