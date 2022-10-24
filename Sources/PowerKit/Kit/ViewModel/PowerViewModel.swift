@@ -223,6 +223,23 @@ public extension PowerViewModel {
         isReloadEventFire = true
     }
     
+    
+    /// Update Header Section Item for speisifc section
+    /// - Parameters:
+    ///   - itemSection: new sectionHeader to updating
+    ///   - forSection: To update item in specific section
+    func update(itemSection: PowerCells, forSection: Int) {
+        guard powerItemsModel.isEmpty == false else { return }
+        guard let item = powerItemsModel.first(where: { $0.section == forSection }) else {
+            self.errorModelInsertion = .sectionNotFound
+            return
+        }
+        guard let sectionItem = item.itemSection else { return }
+        sectionItem.cell = itemSection
+        isReloadEventFire = true
+    }
+    
+    
 }
 
 //MARK: - Show & Hide

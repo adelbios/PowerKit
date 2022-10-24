@@ -7,11 +7,11 @@
 
 import UIKit
 
-public struct ItemSection {
+open class ItemSection {
     
     public let size: NSCollectionLayoutSize
-    public let cell: PowerCells
-    public let pinToVisibleBounds: Bool
+    open var cell: PowerCells
+    open var pinToVisibleBounds: Bool
    
     public init(size: NSCollectionLayoutSize = .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(70)),
          cell: PowerCells,
@@ -21,5 +21,19 @@ public struct ItemSection {
         self.cell = cell
         self.pinToVisibleBounds = pinToVisibleBounds
     }
+    
+}
+
+//MARK: - Hashable
+extension ItemSection: Hashable {
+   
+    public static func == (lhs: ItemSection, rhs: ItemSection) -> Bool {
+        return lhs.cell == rhs.cell
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(cell)
+    }
+    
     
 }
