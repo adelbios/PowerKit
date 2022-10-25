@@ -28,11 +28,11 @@ open class ItemSection {
 extension ItemSection: Hashable {
    
     public static func == (lhs: ItemSection, rhs: ItemSection) -> Bool {
-        return lhs.cell == rhs.cell
+        return lhs.cell.item == rhs.cell.item
     }
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(cell)
+        hasher.combine(cell.item)
     }
     
     
