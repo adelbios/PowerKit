@@ -84,13 +84,12 @@ extension PowerItemModel: Hashable {
     
     
     public static func == (lhs: PowerItemModel, rhs: PowerItemModel) -> Bool {
-        lhs.section == rhs.section
+        ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
     }
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(section)
+        hasher.combine(self)
     }
-    
     
 }
 
