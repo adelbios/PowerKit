@@ -107,6 +107,7 @@ private extension PowerViewController {
         self.collectionView.isSkeletonable = true
         PowerNetworkReachability.shared.startListening()
         viewModel.viewController = self
+        viewModel.collectionView = self.collectionView
     }
     
     func setupActivityIndicatorUI() {

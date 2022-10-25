@@ -16,6 +16,7 @@ open class PowerViewModel<T: Codable>: NSObject {
     open var subscription = Set<AnyCancellable>()
     
     open weak var viewController: UIViewController?
+    open weak var collectionView: UICollectionView?
     
     open var action = PowerActionListProxy()
     
