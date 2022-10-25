@@ -51,7 +51,7 @@ To integrate PowerKit into your Xcode project using Swift Package Manager, add i
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/adelbios/PowerKit.git", .upToNextMajor(from: "1.0.0"))
+    .package(url: "https://github.com/adelbios/PowerKit.git", .upToNextMajor(from: "1.0.15"))
 ]
 ```
 
