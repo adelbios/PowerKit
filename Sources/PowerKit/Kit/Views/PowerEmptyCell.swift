@@ -62,7 +62,7 @@ open class PowerEmptyCell: PowerCollectionCell {
     }()
     
     //MARK: - LifeCycle
-    public override func setupViews() {
+    open override func setupViews() {
         settings()
         setupUI()
     }
