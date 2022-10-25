@@ -73,6 +73,7 @@ extension PowerEmptyCell: PowerCellDelegate {
     
     public func configure(data: PowerEmptyModel) {
         titleLabel.text = data.title
+        titleLabel.isHidden = data.title.isEmpty
         messageLabel.text = data.message
     }
 }
