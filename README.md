@@ -150,7 +150,7 @@ extension DemoViewModel {
     func handleCellsAction() {
         action.on(.didSelect) { (model: Cells.main, cell, indexPath) in
             guard let model = model.item as? DemoModel else { return }
-            //Ue can push, present || dismiss using self.viewController, becase each viewMode have viewController
+            //You can push, present || dismiss using self.viewController, becase each viewMode have viewController
             log(type: .success, model.title)
         }
         
@@ -171,7 +171,7 @@ extension DemoViewModel {
 ```
 #### 2/ work with WebService 
 
-just override these function and call it in parent ```viewController``` And take a look at the <a href="https://github.com/Moya/Moya">Moya</a> to figure out how you can create target for web service
+just override these functions and call it in parent ```viewController``` And take a look at the <a href="https://github.com/Moya/Moya">Moya</a> to figure out how you can create target for web service
 
 
 ```swift 
