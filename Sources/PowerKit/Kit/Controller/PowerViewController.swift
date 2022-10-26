@@ -75,7 +75,17 @@ open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, 
         didDeSelect(indexPath: indexPath)
     }
     
+    //MARK: - ScrollView
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    }
+    
+    open func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    }
+    
+    open func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    }
+    
+    open func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
     }
     
     /// Change color for both self.view & self.collectionView
