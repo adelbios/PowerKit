@@ -236,7 +236,8 @@ public extension PowerViewModel {
             return
         }
         guard let sectionItem = item.itemSection else { return }
-        sectionItem.cell = itemSection
+        sectionItem.cell.item = itemSection.item
+        log(type: .success, itemSection.item)
         isReloadEventFire = true
     }
     
