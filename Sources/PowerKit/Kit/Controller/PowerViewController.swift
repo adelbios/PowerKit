@@ -206,7 +206,10 @@ private extension PowerViewController {
         self.reloadSections(snapshot: &snapshot)
         self.appendItemUsing(snapshot: &snapshot)
         self.collectionView.stopSkeleton()
-        self.diffableDataSource?.apply(snapshot, animatingDifferences: powerSettings.animatingDifferences)
+        self.diffableDataSource?.apply(
+            snapshot,
+            animatingDifferences: viewModel.sectionChangedIdentifier != nil ? false : powerSettings.animatingDifferences
+        )
     }
     
     func appendItemUsing(snapshot: inout snapshots) {
