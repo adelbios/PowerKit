@@ -79,13 +79,21 @@ open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, 
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
     }
     
-    open func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    open func scrollViewDidFinished(_ scrollView: UIScrollView) {
     }
     
-    open func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        scrollViewDidFinished(scrollView)
     }
-    
-    open func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        scrollViewDidFinished(scrollView)
+    }
+
+    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate {
+            scrollViewDidFinished(scrollView)
+        }
     }
     
     open func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
