@@ -7,14 +7,14 @@
 
 import UIKit
 
-class CollectionViewLayout {
+open class CollectionViewLayout {
     
-    var estematedValue: CGFloat = 100
-    var itemSpacing: UIEdgeInsets = .init(top: 8, left: 0, bottom: 0, right: 0)
-    var groupSpacing: UIEdgeInsets = .init(top: 0, left: 20, bottom: 0, right: 20)
-    var sectionInset: NSDirectionalEdgeInsets = .zero
+    open var estematedValue: CGFloat = 100
+    open var itemSpacing: UIEdgeInsets = .init(top: 8, left: 0, bottom: 0, right: 0)
+    open var groupSpacing: UIEdgeInsets = .init(top: 0, left: 20, bottom: 0, right: 20)
+    open var sectionInset: NSDirectionalEdgeInsets = .zero
     
-    func verticalDynamicLayout() -> NSCollectionLayoutSection {
+    open func verticalDynamicLayout() -> NSCollectionLayoutSection {
         let size = set(width: .fractionalWidth(1))
         let item = createItem(size: size)
         let group = createVerticalGroup(size: size, item: item)
@@ -23,7 +23,7 @@ class CollectionViewLayout {
         return section
     }
     
-    func horizontalDynamicLayout() -> NSCollectionLayoutSection {
+    open func horizontalDynamicLayout() -> NSCollectionLayoutSection {
         let itemSize = set(width: .fractionalWidth(1))
         let item = createItem(size: itemSize)
         let group = createHorizontalGroup(size: set(width: .fractionalWidth(0.9)), item: item)
@@ -33,7 +33,7 @@ class CollectionViewLayout {
         return section
     }
     
-    func gridLayout(numberOfItemPerRows: Int) -> NSCollectionLayoutSection {
+    open func gridLayout(numberOfItemPerRows: Int) -> NSCollectionLayoutSection {
         let itemSize: NSCollectionLayoutSize  = .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(80))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         item.edgeSpacing = .init(leading: .none, top: .fixed(16), trailing: .none, bottom: .none)
