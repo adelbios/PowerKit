@@ -88,6 +88,9 @@ open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, 
     open func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
     }
     
+    open func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+    }
+    
     /// Change color for both self.view & self.collectionView
     /// - Parameter color: New Color
     open func setBackground(color: UIColor) {
