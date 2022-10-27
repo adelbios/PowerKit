@@ -44,6 +44,9 @@ open class CollectionViewLayout {
         section.contentInsets = sectionInset
         return section
     }
+    
+    public init() {
+    }
    
     
 }
