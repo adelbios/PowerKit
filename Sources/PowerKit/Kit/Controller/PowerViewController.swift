@@ -13,7 +13,7 @@ fileprivate typealias snapshots = NSDiffableDataSourceSnapshot<Int, AnyHashable>
 
 
 open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, UICollectionViewDelegate,
-                                                                UICollectionViewDataSourcePrefetching {
+                                                              UICollectionViewDataSourcePrefetching {
     
     //MARK: - Variables
     open var powerSettings = PowerSettings()
@@ -133,6 +133,7 @@ private extension PowerViewController {
     
     func requestStatusLoading() {
         guard PowerNetworkReachability.shared.isReachable == true else { return }
+        collectionView.setBackgroundUsing(mode: .without)
         switch self.viewModel.isPowerItemsModelEmpty {
         case true:
             self.setDwonloadContentStyle()
@@ -202,6 +203,7 @@ private extension PowerViewController {
         guard PowerNetworkReachability.shared.isReachable == true else { return }
         var snapshot = snapshots()
         snapshot.appendSections(self.viewModel.powerItemsModel.map({ $0.section }))
+        self.reloadSections(snapshot: &snapshot)
         self.appendItemUsing(snapshot: &snapshot)
         self.collectionView.stopSkeleton()
         self.diffableDataSource?.apply(snapshot, animatingDifferences: powerSettings.animatingDifferences)
@@ -236,6 +238,13 @@ private extension PowerViewController {
         }
         
     }
+    
+    func reloadSections(snapshot: inout snapshots) {
+        guard let sec = viewModel.sectionChangedIdentifier else { return }
+        snapshot.reloadSections([sec])
+        viewModel.sectionChangedIdentifier = nil
+    }
+    
     
 }
 

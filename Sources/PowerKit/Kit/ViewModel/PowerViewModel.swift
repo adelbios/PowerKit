@@ -32,7 +32,7 @@ open class PowerViewModel<T: Codable>: NSObject {
     //MARK: - private Variables
     private(set) var powerItemsModel = [PowerItemModel]()
     private(set) var registeredCellsModel = [RegisteredCellsModel]()
-    
+    var sectionChangedIdentifier: Int?
     private var requestType: RequestType = .get
     
     private var errorModelInsertion: ErrorModelInsertion? {
@@ -236,10 +236,9 @@ public extension PowerViewModel {
             return
         }
         setSectionVisibale(true, model: item)
-        log(type: .error, item.itemSection)
         guard let sectionItem = item.itemSection else { return }
         sectionItem.cell.item = itemSection.item
-        log(type: .success, itemSection.item)
+        self.sectionChangedIdentifier = forSection
         isReloadEventFire = true
     }
     
