@@ -235,6 +235,8 @@ public extension PowerViewModel {
             self.errorModelInsertion = .sectionNotFound
             return
         }
+        setSectionVisibale(true, model: item)
+        log(type: .error, item.itemSection)
         guard let sectionItem = item.itemSection else { return }
         sectionItem.cell.item = itemSection.item
         log(type: .success, itemSection.item)
