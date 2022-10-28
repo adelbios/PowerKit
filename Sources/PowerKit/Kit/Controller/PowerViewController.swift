@@ -240,7 +240,7 @@ private extension PowerViewController {
         case true:
             if powerSettings.keepSectionVisibaleForEmptyPowerItem == false {
                 self.collectionView.setBackgroundUsing(mode: .empty)
-                item.layout.boundarySupplementaryItems = []
+//                item.layout.boundarySupplementaryItems = []
             } else {
                 snapshot.appendItems([item.emptyCell!], toSection: item.section)
             }
