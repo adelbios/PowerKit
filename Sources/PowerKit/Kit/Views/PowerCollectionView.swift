@@ -12,10 +12,13 @@ open class PowerCollectionView: UICollectionView {
     //MARK: - Variables
     public let emptyView = PowerEmptyView()
     
+    public var mode: BackgroundViewMode = .loading
+    
     public enum BackgroundViewMode {
         case error
         case empty
         case without
+        case loading
     }
     
     //MARK: - LifeCycle
@@ -33,8 +36,9 @@ open class PowerCollectionView: UICollectionView {
 public extension PowerCollectionView {
 
     
-    func setBackgroundUsing(mode: BackgroundViewMode) {
+    func setBackground(mode: BackgroundViewMode) {
         self.backgroundView = (mode == .empty || mode == .error) ? emptyView : nil
+        self.mode = mode
     }
     
     func setInsit(_ value: UIEdgeInsets) {

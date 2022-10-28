@@ -144,7 +144,7 @@ private extension PowerViewController {
     
     func requestStatusLoading() {
         guard PowerNetworkReachability.shared.isReachable == true else { return }
-        collectionView.setBackgroundUsing(mode: .without)
+        collectionView.setBackground(mode: .loading)
         switch self.viewModel.isPowerItemsModelEmpty {
         case true:
             self.setDwonloadContentStyle()
@@ -158,6 +158,7 @@ private extension PowerViewController {
     func requestStatusFinished() {
         endDownloadContentStyle()
         collectionView.termnatePullToRefresh()
+        collectionView.setBackground(mode: .without)
     }
     
 }
@@ -212,6 +213,14 @@ private extension PowerViewController {
     
     func updateDiffableDataSource() {
         guard PowerNetworkReachability.shared.isReachable == true else { return }
+        if self.collectionView.mode == .loading {
+            updateDiffableDataSourceWitLoadingMode()
+        } else {
+            updateDiffableDataSourceWithoutMode()
+        }
+    }
+    
+    func updateDiffableDataSourceWithoutMode() {
         var snapshot = snapshots()
         snapshot.appendSections(self.viewModel.powerItemsModel.map({ $0.section }))
         self.reloadSections(snapshot: &snapshot)
@@ -222,6 +231,20 @@ private extension PowerViewController {
             animatingDifferences: viewModel.sectionChangedIdentifier != nil ? false : powerSettings.animatingDifferences
         )
     }
+    
+    func updateDiffableDataSourceWitLoadingMode() {
+        var snapshot = snapshots()
+        snapshot.appendSections(self.viewModel.powerItemsModel.map({ $0.section }))
+        viewModel.powerItemsModel.forEach { model in
+            model.layout.boundarySupplementaryItems = model.boundarySupplementaryItem
+            snapshot.appendItems(model.item, toSection: model.section)
+        }
+        
+        self.collectionView.stopSkeleton()
+        self.diffableDataSource?.apply(snapshot, animatingDifferences: false)
+    }
+    
+    
     
     func appendItemUsing(snapshot: inout snapshots) {
         viewModel.powerItemsModel.forEach { model in
@@ -239,14 +262,14 @@ private extension PowerViewController {
         switch isEmptyUsed {
         case true:
             if powerSettings.keepSectionVisibaleForEmptyPowerItem == false {
-                self.collectionView.setBackgroundUsing(mode: .empty)
-//                item.layout.boundarySupplementaryItems = []
+                self.collectionView.setBackground(mode: .empty)
+                item.layout.boundarySupplementaryItems = []
             } else {
                 snapshot.appendItems([item.emptyCell!], toSection: item.section)
             }
             
         case false:
-            self.collectionView.setBackgroundUsing(mode: .without)
+            self.collectionView.setBackground(mode: .without)
             item.layout.boundarySupplementaryItems = item.boundarySupplementaryItem
             snapshot.appendItems(item.item, toSection: item.section)
         }
@@ -258,6 +281,7 @@ private extension PowerViewController {
         snapshot.reloadSections([sec])
         viewModel.sectionChangedIdentifier = nil
     }
+    
     
     
 }
@@ -317,7 +341,7 @@ private extension PowerViewController {
     func configureErrorModel(_ model: PowerNetworkErrorLoadingModel) {
         guard viewModel.isPowerItemsModelEmpty == true else { return }
         powerSettings.keepSectionVisibaleForEmptyPowerItem = false
-        collectionView.setBackgroundUsing(mode: .error)
+        collectionView.setBackground(mode: .error)
         collectionView.emptyView.configure(
             viewType: .network, layoutPosition: .middle,
             title: model.description, message: model.message,
@@ -338,7 +362,7 @@ private extension PowerViewController {
     func reloadRequest() {
         switch PowerNetworkReachability.shared.isReachable {
         case true:
-            self.collectionView.setBackgroundUsing(mode: .without)
+            self.collectionView.setBackground(mode: .loading)
             self.viewModel.makeHTTPRequest()
         case false:
             let model = self.viewModel.network.networkErrorModel
