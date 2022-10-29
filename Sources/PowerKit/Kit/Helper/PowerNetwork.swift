@@ -37,7 +37,7 @@ open class PowerNetwork: NSObject {
     
     @Published private(set) var networkErrorModel: PowerNetworkErrorLoadingModel?
     
-    @Published private(set) var status: RequestStatus = .finished
+    @Published private(set) var status: RequestStatus = .loading
     
     
     //MARK: - LifeCycle
@@ -49,7 +49,7 @@ open class PowerNetwork: NSObject {
     
     open func request(_ target: TargetType, at view: UIView? = nil, printOutResult: Bool = false, withProgress: Bool = false){
         self.printResultOut = printOutResult
-        guard self.status == .finished else { return }
+//        guard self.status == .finished else { return }
         self.status = .loading
         self.showLoadingViewAt(view)
         self.completeRequest(target)
