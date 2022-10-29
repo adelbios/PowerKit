@@ -214,6 +214,7 @@ private extension PowerViewController {
     func updateDiffableDataSource(isSettings: Bool) {
         guard PowerNetworkReachability.shared.isReachable == true else { return }
         var snapshot = snapshots()
+        snapshot.appendSections(self.viewModel.powerItemsModel.map({ $0.section }))
         self.reloadSections(snapshot: &snapshot)
         self.appendItemUsing(snapshot: &snapshot, isSettings: isSettings)
         self.collectionView.stopSkeleton()
