@@ -45,6 +45,7 @@ open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, 
         settings()
         createDiffableDataSource()
         createDiffableSections()
+        reloadSettingsModel()
         reloadPowerItemModel()
         observeRequestStatus()
         observeNetworkError()
@@ -210,17 +211,15 @@ private extension PowerViewController {
         }
     }
     
-    
-    func updateDiffableDataSource() {
+    func updateDiffableDataSourceForLoadingMode() {
         guard PowerNetworkReachability.shared.isReachable == true else { return }
-        if self.collectionView.mode == .loading {
-            updateDiffableDataSourceWitLoadingMode()
-        } else {
-            updateDiffableDataSourceWithoutMode()
-        }
+        var snapshot = snapshots()
+        snapshot.appendSections(self.viewModel.powerItemsModel.map({ $0.section }))
+        self.viewModel.powerItemsModel.forEach { snapshot.appendItems($0.item, toSection: $0.section) }
+        self.diffableDataSource?.apply(snapshot, animatingDifferences: false)
     }
     
-    func updateDiffableDataSourceWithoutMode() {
+    func updateDiffableDataSource() {
         var snapshot = snapshots()
         snapshot.appendSections(self.viewModel.powerItemsModel.map({ $0.section }))
         self.reloadSections(snapshot: &snapshot)
@@ -231,20 +230,6 @@ private extension PowerViewController {
             animatingDifferences: viewModel.sectionChangedIdentifier != nil ? false : powerSettings.animatingDifferences
         )
     }
-    
-    func updateDiffableDataSourceWitLoadingMode() {
-        var snapshot = snapshots()
-        snapshot.appendSections(self.viewModel.powerItemsModel.map({ $0.section }))
-        viewModel.powerItemsModel.forEach { model in
-            model.layout.boundarySupplementaryItems = model.boundarySupplementaryItem
-            snapshot.appendItems(model.item, toSection: model.section)
-        }
-        
-        self.collectionView.stopSkeleton()
-        self.diffableDataSource?.apply(snapshot, animatingDifferences: false)
-    }
-    
-    
     
     func appendItemUsing(snapshot: inout snapshots) {
         viewModel.powerItemsModel.forEach { model in
@@ -298,6 +283,17 @@ private extension PowerViewController {
                 self.updateDiffableDataSource()
             }.store(in: &viewModel.subscription)
     }
+    
+    func reloadSettingsModel() {
+        viewModel.$isAddSettingsEventFire
+            .compactMap { $0 }
+            .filter { $0 == true }
+            .sink { [weak self] _ in
+                guard let self else { return }
+                self.updateDiffableDataSourceForLoadingMode()
+            }.store(in: &viewModel.subscription)
+    }
+    
     
     func observeRequestStatus() {
         self.viewModel.network.$status
