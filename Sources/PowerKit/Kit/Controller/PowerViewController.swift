@@ -222,7 +222,6 @@ private extension PowerViewController {
     func updateDiffableDataSource() {
 //        var snapshot = snapshots()
         guard var snapshot = self.diffableDataSource?.snapshot() else { return }
-        snapshot.appendSections(self.viewModel.powerItemsModel.map({ $0.section }))
         self.reloadSections(snapshot: &snapshot)
         self.appendItemUsing(snapshot: &snapshot)
         self.collectionView.stopSkeleton()
