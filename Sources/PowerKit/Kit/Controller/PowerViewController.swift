@@ -145,6 +145,7 @@ private extension PowerViewController {
     
     func requestStatusLoading() {
         guard PowerNetworkReachability.shared.isReachable == true else { return }
+        self.collectionView.setBackground(mode: .without)
         switch self.viewModel.isPowerItemsModelEmpty {
         case true:
             self.setDwonloadContentStyle()

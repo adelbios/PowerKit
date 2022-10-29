@@ -196,7 +196,7 @@ public extension PowerViewModel {
     }
     
     /// Remove Item from spesific section
-    /// - Parameter item: New item to be insertion
+    /// - Parameter item: reomve item from model
     /// - Parameter section: To select which section and delete all its data
     /// - Parameter keepSectionVisible: When item is Empty Keep Section Visibale or not
     func remove(item: PowerCells, section: Int, keepSectionVisible: Bool) {
@@ -204,6 +204,22 @@ public extension PowerViewModel {
         guard let index = model.item.firstIndex(where: { $0.item == item.item }) else { return }
         let powerModel = powerItemsModel[section]
         powerModel.item.remove(at: index)
+        if powerModel.item.isEmpty {
+            setSectionVisibale(keepSectionVisible, model: powerModel)
+        }
+        
+        isReloadEventFire = true
+    }
+    
+    /// Remove Item from spesific section
+    /// - Parameter itemIndex: item index position
+    /// - Parameter section: To select which section and delete all its data
+    /// - Parameter keepSectionVisible: When item is Empty Keep Section Visibale or not
+    func remove(itemIndex: Int, section: Int, keepSectionVisible: Bool) {
+        guard let model = self.powerItemsModel.filter({ $0.section == section }).first else { return }
+        guard model.item.isEmpty == false else { return }
+        let powerModel = powerItemsModel[section]
+        powerModel.item.remove(at: itemIndex)
         if powerModel.item.isEmpty {
             setSectionVisibale(keepSectionVisible, model: powerModel)
         }
