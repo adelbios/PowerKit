@@ -219,9 +219,10 @@ public extension PowerViewModel {
         guard let model = self.powerItemsModel.filter({ $0.section == section }).first else { return }
         guard model.item.isEmpty == false else { return }
         let powerModel = powerItemsModel[section]
-        powerModel.item.remove(at: itemIndex)
         if powerModel.item.isEmpty {
             setSectionVisibale(keepSectionVisible, model: powerModel)
+        } else {
+            powerModel.item.remove(at: itemIndex)
         }
         
         isReloadEventFire = true
