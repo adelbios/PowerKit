@@ -145,7 +145,6 @@ private extension PowerViewController {
     
     func requestStatusLoading() {
         guard PowerNetworkReachability.shared.isReachable == true else { return }
-        collectionView.setBackground(mode: .loading)
         switch self.viewModel.isPowerItemsModelEmpty {
         case true:
             self.setDwonloadContentStyle()
@@ -159,7 +158,6 @@ private extension PowerViewController {
     func requestStatusFinished() {
         endDownloadContentStyle()
         collectionView.termnatePullToRefresh()
-        collectionView.setBackground(mode: .without)
     }
     
 }
@@ -236,7 +234,7 @@ private extension PowerViewController {
     }
     
     func appendForVisibleItem(_ item: PowerItemModel, snapshot: inout snapshots, isSettings: Bool) {
-        guard self.collectionView.mode != .loading else { return }
+        guard viewModel.network.status == .finished else { return }
         let isEmptyUsed = item.item.isEmpty && item.emptyCell != nil
         switch isEmptyUsed {
         case true:

@@ -12,9 +12,7 @@ open class PowerViewModel<T: Codable>: NSObject {
     
     //MARK: - Public Variables
     public let json = JSONDecoder()
-    
     open var subscription = Set<AnyCancellable>()
-    
     open weak var viewController: UIViewController?
     open weak var collectionView: UICollectionView?
     
