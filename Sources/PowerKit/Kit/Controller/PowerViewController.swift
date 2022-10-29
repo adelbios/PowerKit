@@ -211,17 +211,11 @@ private extension PowerViewController {
         }
     }
     
-    func updateDiffableDataSourceForLoadingMode() {
+    func updateDiffableDataSource(isSettings: Bool) {
         guard PowerNetworkReachability.shared.isReachable == true else { return }
         var snapshot = snapshots()
-        snapshot.appendSections(self.viewModel.powerItemsModel.map({ $0.section }))
-        self.diffableDataSource?.apply(snapshot, animatingDifferences: false)
-    }
-    
-    func updateDiffableDataSource() {
-        guard var snapshot = self.diffableDataSource?.snapshot() else { return }
         self.reloadSections(snapshot: &snapshot)
-        self.appendItemUsing(snapshot: &snapshot)
+        self.appendItemUsing(snapshot: &snapshot, isSettings: isSettings)
         self.collectionView.stopSkeleton()
         self.diffableDataSource?.apply(
             snapshot,
@@ -229,18 +223,19 @@ private extension PowerViewController {
         )
     }
     
-    func appendItemUsing(snapshot: inout snapshots) {
+    func appendItemUsing(snapshot: inout snapshots, isSettings: Bool) {
         viewModel.powerItemsModel.forEach { model in
             switch model.isItemVisible {
             case true:
-                appendForVisibleItem(model, snapshot: &snapshot)
+                appendForVisibleItem(model, snapshot: &snapshot, isSettings: isSettings)
             case false:
                 snapshot.deleteItems(model.item)
             }
         }
     }
     
-    func appendForVisibleItem(_ item: PowerItemModel, snapshot: inout snapshots) {
+    func appendForVisibleItem(_ item: PowerItemModel, snapshot: inout snapshots, isSettings: Bool) {
+        guard self.collectionView.mode != .loading else { return }
         let isEmptyUsed = item.item.isEmpty && item.emptyCell != nil
         switch isEmptyUsed {
         case true:
@@ -278,7 +273,7 @@ private extension PowerViewController {
             .filter { $0 == true }
             .sink { [weak self] _ in
                 guard let self else { return }
-                self.updateDiffableDataSource()
+                self.updateDiffableDataSource(isSettings: false)
             }.store(in: &viewModel.subscription)
     }
     
@@ -288,7 +283,7 @@ private extension PowerViewController {
             .filter { $0 == true }
             .sink { [weak self] _ in
                 guard let self else { return }
-                self.updateDiffableDataSourceForLoadingMode()
+                self.updateDiffableDataSource(isSettings: true)
             }.store(in: &viewModel.subscription)
     }
     
