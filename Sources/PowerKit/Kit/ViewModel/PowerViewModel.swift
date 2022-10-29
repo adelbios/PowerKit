@@ -54,7 +54,7 @@ open class PowerViewModel<T: Codable>: NSObject {
     }
     
     //MARK: - Combine Variables
-    @Published open private(set) var isReloadEventFire: Bool?
+    @Published private(set) var isReloadEventFire: Bool?
     @Published private(set) var isAddSettingsEventFire: Bool?
     @Published open private(set) var didRequestCompleteEvent: Bool?
     
@@ -103,6 +103,10 @@ open class PowerViewModel<T: Codable>: NSObject {
     
     open func fetchStaticData(){
         self.network.ignoreNetworkRequest()
+    }
+    
+    open func reloadModel() {
+        isReloadEventFire = true
     }
     
     //MARK: - Paging request
