@@ -56,8 +56,7 @@ open class PowerViewModel<T: Codable>: NSObject {
     //MARK: - Combine Variables
     @Published private(set) var isReloadEventFire: Bool?
     @Published private(set) var isAddSettingsEventFire: Bool?
-    @Published private var isSetupSettingsEnabled: Bool?
-    @Published open var didRequestCompleteEvent: Bool?
+    @Published open private(set) var didRequestCompleteEvent: Bool?
     
     
     //MARK: - Netwrok Variables
