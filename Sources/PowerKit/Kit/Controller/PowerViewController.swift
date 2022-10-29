@@ -350,7 +350,6 @@ private extension PowerViewController {
     func reloadRequest() {
         switch PowerNetworkReachability.shared.isReachable {
         case true:
-            self.collectionView.setBackground(mode: .loading)
             self.viewModel.makeHTTPRequest()
         case false:
             let model = self.viewModel.network.networkErrorModel
