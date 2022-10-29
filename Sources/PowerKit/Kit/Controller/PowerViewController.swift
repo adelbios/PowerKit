@@ -215,12 +215,10 @@ private extension PowerViewController {
         guard PowerNetworkReachability.shared.isReachable == true else { return }
         var snapshot = snapshots()
         snapshot.appendSections(self.viewModel.powerItemsModel.map({ $0.section }))
-        self.viewModel.powerItemsModel.forEach { snapshot.appendItems($0.item, toSection: $0.section) }
         self.diffableDataSource?.apply(snapshot, animatingDifferences: false)
     }
     
     func updateDiffableDataSource() {
-//        var snapshot = snapshots()
         guard var snapshot = self.diffableDataSource?.snapshot() else { return }
         self.reloadSections(snapshot: &snapshot)
         self.appendItemUsing(snapshot: &snapshot)
