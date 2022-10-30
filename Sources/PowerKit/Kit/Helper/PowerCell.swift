@@ -11,7 +11,7 @@ import UIKit
 //MARK: - PowerCell
 public protocol PowerCellDelegate {
     static var reuseIdentifier: String { get }
-    func passOtherData(_ data: Any?)
+    func configureOther(_ data: AnyHashable?)
     associatedtype DataType
     func configure(data: DataType)
 }
@@ -34,7 +34,7 @@ open class PowerModel<CellType: PowerCellDelegate, DataType: Hashable>: PowerCel
     
     override func configure(cell: UIView) {
         let cell = (cell as! CellType)
-        if let other = otherItem { cell.passOtherData(other) }
+        cell.configureOther(otherItems)
         cell.configure(data: self.item as! DataType)
     }
     
@@ -47,7 +47,7 @@ extension PowerCellDelegate {
         return String(describing: Self.self)
     }
     
-   public  func passOtherData(_ data: Any?) { }
+   public  func configureOther(_ data: AnyHashable?) { }
     
 }
 
@@ -58,12 +58,14 @@ private protocol PowerDelegate {
     func configure(cell: UIView)
     associatedtype DataType
     func configure(data: DataType)
+    func configureOther(data: AnyHashable?)
 }
 
 
 open class PowerCells: PowerDelegate, Hashable, Equatable   {
     
     open var item: AnyHashable!
+    open var otherItems: AnyHashable?
     open var cell: UICollectionViewCell!
   
     class var cellId: String {
@@ -75,6 +77,10 @@ open class PowerCells: PowerDelegate, Hashable, Equatable   {
     
     func configure(data: any Hashable) {
         self.item = data as? AnyHashable
+    }
+    
+    func configureOther(data: AnyHashable?) {
+        self.otherItems = data
     }
 
     public func hash(into hasher: inout Hasher) {
