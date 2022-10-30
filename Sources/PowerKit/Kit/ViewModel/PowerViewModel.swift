@@ -262,6 +262,19 @@ public extension PowerViewModel {
     }
     
     
+    /// Get PowerItemModel for spesific sections
+    /// - Parameter forSection: To set specific section
+    /// - Returns: PowerItemModel with nil possibility
+    func getPowerItemModel(forSection: Int) -> PowerItemModel? {
+        guard self.powerItemsModel.isEmpty == false else { return nil }
+        guard let model = self.powerItemsModel.first(where: { $0.section == forSection }) else {
+            self.errorModelInsertion = .sectionNotFound
+            return nil
+        }
+        return model
+    }
+    
+    
 }
 
 //MARK: - Show & Hide
