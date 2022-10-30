@@ -18,18 +18,15 @@ public protocol PowerCellDelegate {
 
 
 open class PowerModel<CellType: PowerCellDelegate, DataType: Hashable>: PowerCells where CellType.DataType == DataType, CellType: UICollectionViewCell {
-  
-    open var otherItem: Any?
-   
+     
     static override var cellId: String {
         return CellType.name
     }
     
-    
-    public init(item: DataType, otherItem: Any? = nil) {
+    public init(item: DataType, otherItem: AnyHashable? = nil) {
         super.init()
+        self.otherItems = otherItem
         self.item = item
-        self.otherItem = otherItem
     }
     
     override func configure(cell: UIView) {
