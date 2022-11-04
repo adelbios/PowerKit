@@ -21,7 +21,7 @@ open class PowerNetwork: NSObject {
     
     private var printResultOut: Bool = true
     
-    private(set) var fileSize: String = ""
+    open private(set) var fileSize: String = ""
     
     private lazy var provider: MoyaProvider<MultiTarget> = {
         let provider = MoyaProvider<MultiTarget>(plugins: isLoadingInBackground ? [PowerBackgroundPlugin()] : [])
@@ -31,11 +31,11 @@ open class PowerNetwork: NSObject {
     //MARK: - Combine variable
     private var subscription: Set<AnyCancellable>!
     
-    @Published private(set) var data: Data?
+    @Published open private(set) var data: Data?
     
-    @Published open var requestProgress: Progress?
+    @Published open private(set) var requestProgress: Progress?
     
-    @Published private(set) var networkErrorModel: PowerNetworkErrorLoadingModel?
+    @Published open private(set) var networkErrorModel: PowerNetworkErrorLoadingModel?
     
     @Published private(set) var status: RequestStatus = .loading
     

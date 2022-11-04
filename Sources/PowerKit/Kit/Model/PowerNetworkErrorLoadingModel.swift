@@ -10,11 +10,11 @@ import Foundation
 
 import UIKit
 
-struct PowerNetworkErrorLoadingModel {
+public struct PowerNetworkErrorLoadingModel {
     
     let statusCode: Int
     
-    enum NetworkError: Int, Error {
+    public enum NetworkError: Int, Error {
         case noInternet = 6
         case badRequest = 400
         case unauthorized = 401
@@ -31,7 +31,7 @@ struct PowerNetworkErrorLoadingModel {
         
     }
     
-    var error: NetworkError {
+    public var error: NetworkError {
         if (0...6).contains(statusCode) {
             return .noInternet
         } else if (200...299).contains(statusCode) {
@@ -51,7 +51,7 @@ struct PowerNetworkErrorLoadingModel {
         }
     }
     
-    var description: String {
+    public var description: String {
         let status = NetworkError(rawValue: statusCode) ?? .undefined
         switch status {
         case .noError:
@@ -84,7 +84,7 @@ struct PowerNetworkErrorLoadingModel {
         }
     }
     
-    var message: String {
+    public var message: String {
         let status = NetworkError(rawValue: statusCode) ?? .undefined
         switch status {
         case .noInternet:
