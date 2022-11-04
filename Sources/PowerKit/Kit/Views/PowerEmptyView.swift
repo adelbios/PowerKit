@@ -12,7 +12,7 @@ public class PowerEmptyView: PowerView  {
     
     
     //MARK: - Variables
-    @Published private(set) var isActionButtonClicked: Bool?
+    @Published open private(set) var isActionButtonClicked: Bool?
     
     public enum LayoutPosition {
         case top, middle, bottom
