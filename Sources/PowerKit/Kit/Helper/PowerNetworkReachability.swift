@@ -9,28 +9,28 @@ import UIKit
 import Alamofire
 import Combine
 
-final class PowerNetworkReachability {
+open class PowerNetworkReachability {
     
     //MARK: - Variables
-    static let shared = PowerNetworkReachability()
+    public static let shared = PowerNetworkReachability()
     
-    private(set) var networkStatus = PassthroughSubject<NetworkReachabilityManager.NetworkReachabilityStatus, Error>()
+    open private(set) var networkStatus = PassthroughSubject<NetworkReachabilityManager.NetworkReachabilityStatus, Error>()
     
     private var reachability = NetworkReachabilityManager(host: "google.com")
     
-    var isReachableOnCellular: Bool {
+    open var isReachableOnCellular: Bool {
         get {
             return reachability?.isReachableOnCellular ?? false
         }
     }
     
-    var isReachableOnEthernetOrWiFi: Bool {
+    open var isReachableOnEthernetOrWiFi: Bool {
         get {
             return reachability?.isReachableOnEthernetOrWiFi ?? false
         }
     }
     
-    var isReachable: Bool {
+    open var isReachable: Bool {
         get {
             return reachability?.isReachable ?? false
         }
