@@ -324,10 +324,25 @@ private extension PowerViewController {
 
 
 //MARK: - Helper
-private extension PowerViewController {
+extension PowerViewController {
+    
+    public func reloadRequest() {
+        switch PowerNetworkReachability.shared.isReachable {
+        case true:
+            self.viewModel.makeHTTPRequest()
+        case false:
+            let model = self.viewModel.network.networkErrorModel
+            let arTitle = "لا يوجد اتصال بالإنترنت"
+            let arMessage = "يبدو انه لايوجد إتصال بالإنترنت تاكد من اتصالك من خلال الشبكة الخلوية او شبكة WI-FI"
+            let title = model == nil ? arTitle : model!.description
+            let message = model == nil ? arMessage : model!.message
+            self.showAlertForInternetConnectionError(title: title, message: message)
+            self.collectionView.termnatePullToRefresh()
+        }
+    }
     
     
-    func configureErrorModel(_ model: PowerNetworkErrorLoadingModel) {
+    private func configureErrorModel(_ model: PowerNetworkErrorLoadingModel) {
         guard viewModel.isPowerItemsModelEmpty == true else { return }
         powerSettings.keepSectionVisibaleForEmptyPowerItem = false
         collectionView.setBackground(mode: .error)
@@ -348,22 +363,8 @@ private extension PowerViewController {
         
     }
     
-    func reloadRequest() {
-        switch PowerNetworkReachability.shared.isReachable {
-        case true:
-            self.viewModel.makeHTTPRequest()
-        case false:
-            let model = self.viewModel.network.networkErrorModel
-            let arTitle = "لا يوجد اتصال بالإنترنت"
-            let arMessage = "يبدو انه لايوجد إتصال بالإنترنت تاكد من اتصالك من خلال الشبكة الخلوية او شبكة WI-FI"
-            let title = model == nil ? arTitle : model!.description
-            let message = model == nil ? arMessage : model!.message
-            self.showAlertForInternetConnectionError(title: title, message: message)
-            self.collectionView.termnatePullToRefresh()
-        }
-    }
     
-    func fetchNextPage(_ indexPaths: [IndexPath]) {
+    private func fetchNextPage(_ indexPaths: [IndexPath]) {
         guard viewModel.powerItemsModel.isEmpty == false else { return }
         indexPaths.forEach { indexPath in
             let model = self.viewModel.powerItemsModel[indexPath.section]
@@ -375,7 +376,7 @@ private extension PowerViewController {
         }
     }
     
-    func eventForCustomCell() {
+    private func eventForCustomCell() {
         NotificationCenter.default.publisher(for: PowerCellsAction.notificationName)
             .receive(on: DispatchQueue.main)
             .removeDuplicates()
@@ -394,13 +395,13 @@ private extension PowerViewController {
             }.store(in: &viewModel.subscription)
     }
     
-    func didSelect(indexPath: IndexPath) {
+    private func didSelect(indexPath: IndexPath) {
         guard let model = diffableDataSource?.itemIdentifier(for: indexPath) else { return }
         guard let cell = collectionView.cellForItem(at: indexPath) else { return }
         self.viewModel.action.invoke(action: .didSelect, cell: cell, configurator: model as! PowerCells, indexPath: indexPath)
     }
     
-    func didDeSelect(indexPath: IndexPath) {
+    private func didDeSelect(indexPath: IndexPath) {
         guard let model = diffableDataSource?.itemIdentifier(for: indexPath) else { return }
         guard let cell = collectionView.cellForItem(at: indexPath) else { return }
         self.viewModel.action.invoke(action: .didDeSelect, cell: cell, configurator: model as! PowerCells, indexPath: indexPath)
