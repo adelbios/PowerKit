@@ -344,7 +344,8 @@ extension PowerViewController {
     
     private func configureErrorModel(_ model: PowerNetworkErrorLoadingModel) {
         guard viewModel.isPowerItemsModelEmpty == true else { return }
-        powerSettings.keepSectionVisibaleForEmptyPowerItem = false
+//        powerSettings
+        viewModel.removeAll(keepSectionVisible: false)
         collectionView.setBackground(mode: .error)
         collectionView.emptyView.configure(
             viewType: .network, layoutPosition: .middle,
