@@ -225,7 +225,7 @@ private extension PowerViewController {
     
     func appendItemUsing(snapshot: inout snapshots, isSettings: Bool) {
         viewModel.powerItemsModel.forEach { model in
-            switch model.isItemVisible {
+            switch model.isItemVisible && self.collectionView.mode != .error {
             case true:
                 appendForVisibleItem(model, snapshot: &snapshot, isSettings: isSettings)
             case false:
@@ -344,9 +344,8 @@ extension PowerViewController {
     
     private func configureErrorModel(_ model: PowerNetworkErrorLoadingModel) {
         guard viewModel.isPowerItemsModelEmpty == true else { return }
-//        powerSettings
+        self.collectionView.setBackground(mode: .error)
         viewModel.removeAll(keepSectionVisible: false)
-        collectionView.setBackground(mode: .error)
         collectionView.emptyView.configure(
             viewType: .network, layoutPosition: .middle,
             title: model.description, message: model.message,

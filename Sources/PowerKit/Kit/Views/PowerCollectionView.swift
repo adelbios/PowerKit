@@ -12,6 +12,8 @@ open class PowerCollectionView: UICollectionView {
     //MARK: - Variables
     public let emptyView = PowerEmptyView()
     
+    var mode: BackgroundViewMode = .without
+    
     public enum BackgroundViewMode {
         case error
         case empty
@@ -35,6 +37,7 @@ public extension PowerCollectionView {
     
     func setBackground(mode: BackgroundViewMode) {
         self.backgroundView = (mode == .empty || mode == .error) ? emptyView : nil
+        self.mode = mode
     }
     
     func setInsit(_ value: UIEdgeInsets) {
