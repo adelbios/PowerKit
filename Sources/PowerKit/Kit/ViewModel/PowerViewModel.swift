@@ -28,7 +28,7 @@ open class PowerViewModel<T: Codable>: NSObject {
     }
     
     //MARK: - private Variables
-    private(set) var powerItemsModel = [PowerItemModel]()
+    open private(set) var powerItemsModel = [PowerItemModel]()
     private(set) var registeredCellsModel = [RegisteredCellsModel]()
     var sectionChangedIdentifier: Int?
     private var requestType: RequestType = .get
