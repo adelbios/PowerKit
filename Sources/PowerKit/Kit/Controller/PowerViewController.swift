@@ -247,7 +247,8 @@ private extension PowerViewController {
             }
             
         case false:
-            self.collectionView.setBackground(mode: item.item.isEmpty ? .empty : .without)
+            let value = powerSettings.keepSectionVisibaleForEmptyPowerItem == false && item.item.isEmpty
+            collectionView.setBackground(mode: value ? .empty : .without)
             item.layout.boundarySupplementaryItems = item.boundarySupplementaryItem
             snapshot.appendItems(item.item, toSection: item.section)
         }
