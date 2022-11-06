@@ -247,7 +247,7 @@ private extension PowerViewController {
             }
             
         case false:
-            self.collectionView.setBackground(mode: .without)
+            self.collectionView.setBackground(mode: item.item.isEmpty ? .empty : .without)
             item.layout.boundarySupplementaryItems = item.boundarySupplementaryItem
             snapshot.appendItems(item.item, toSection: item.section)
         }
