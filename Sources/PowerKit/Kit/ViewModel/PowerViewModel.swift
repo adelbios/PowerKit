@@ -274,11 +274,11 @@ public extension PowerViewModel {
             return
         }
         
+        item.item.removeAll()
         forItems.forEach { newItem in
             appendOrInsertNewItem(at: nil, powerItemModel: item, newItem: newItem, forSection: forSection)
         }
         
-//        item.item = forItems
         isReloadEventFire = true
     }
     
