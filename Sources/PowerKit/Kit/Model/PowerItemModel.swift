@@ -10,7 +10,7 @@ import UIKit
 
 open class PowerItemModel {
     
-    final let section: Int
+    public final let section: Int
     final let registeredCells: [RegisteredCellsModel]
     open var itemSection: ItemSection?
     open var loadMoreSection: PowerLoadMoreModel?
