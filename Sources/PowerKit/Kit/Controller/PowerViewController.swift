@@ -219,7 +219,7 @@ private extension PowerViewController {
         self.collectionView.stopSkeleton()
         self.diffableDataSource?.apply(
             snapshot,
-            animatingDifferences: viewModel.sectionChangedIdentifier != nil ? false : powerSettings.animatingDifferences
+            animatingDifferences: powerSettings.animatingDifferences
         )
     }
     
