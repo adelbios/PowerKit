@@ -78,20 +78,6 @@ private extension PowerNetwork {
                 self.didResponseSuccess(response, target: target)
             }
         }
-
-//        provider.requestWithProgressPublisher(.target(target), callbackQueue: DispatchQueue.main)
-//            .sink { [weak self] completion in
-//                guard let self = self else { return }
-//                guard case let .failure(error) = completion else { return }
-//                self.didRequestFailure(error)
-//            } receiveValue: { [weak self] response in
-//                guard let self = self else { return }
-//                guard let progress = response.progressObject else { return }
-//                self.requestProgress = progress
-//                self.fileSize = PowerUnits(bytes: progress.totalUnitCount).readablePrefexUnit
-//                guard let res = response.response else { return }
-//                self.didResponseSuccess(res, target: target)
-//            }.store(in: &subscription)
     }
     
     func didResponseSuccess(_ response: Response, target: TargetType) {

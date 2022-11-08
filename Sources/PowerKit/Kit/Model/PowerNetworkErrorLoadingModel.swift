@@ -12,7 +12,7 @@ import UIKit
 
 public struct PowerNetworkErrorLoadingModel {
     
-    let statusCode: Int
+    public let statusCode: Int
     
     public enum NetworkError: Int, Error {
         case noInternet = 6
