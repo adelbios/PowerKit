@@ -81,7 +81,7 @@ private extension PowerNetwork {
     }
     
     func didResponseSuccess(_ response: Response, target: TargetType) {
-        self.printRespinseResultUsing(target, data: response.data)
+        self.printRespinseResultUsing(target, response: response, data: response.data)
         guard requestFailure(response.statusCode) == false else { return }
         guard checkIfDataCorrupted(response.data) == false else { return }
         self.data = response.data
@@ -115,10 +115,10 @@ private extension PowerNetwork {
         view.endEditing(true)
     }
     
-    func printRespinseResultUsing(_ target: TargetType, data: Data) {
+    func printRespinseResultUsing(_ target: TargetType, response: Response, data: Data) {
         loadingView.dismiss(animated: true)
         guard printResultOut == true else { return }
-        print("============Start (\(target.path))===================================")
+        print("============Start (\(target.path)_\(response.statusCode)===================================")
         log(type: .warning, data.toJSONString)
         print("============End (\(target.path))======================================")
     }
