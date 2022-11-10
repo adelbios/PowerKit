@@ -20,6 +20,7 @@ open class PowerViewModel<T: Codable>: NSObject {
     
     open var isPowerItemsModelEmpty: Bool {
         let items = self.powerItemsModel.map({ $0.item }).map { $0.isEmpty }.filter { $0 == false }
+        self.isEmptyDataEventFire = items.isEmpty
         return items.isEmpty
     }
     
@@ -57,6 +58,7 @@ open class PowerViewModel<T: Codable>: NSObject {
     @Published private(set) var isReloadEventFire: Bool?
     @Published private(set) var isAddSettingsEventFire: Bool?
     @Published open private(set) var didRequestCompleteEvent: Bool?
+    @Published open private(set) var isEmptyDataEventFire: Bool?
     
     
     //MARK: - Netwrok Variables
