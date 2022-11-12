@@ -136,7 +136,8 @@ private extension PowerNetwork {
     
     func checkErrorModel(_ response: Response) {
         let json = JSONDecoder()
-        json.implement(useKeyDecodingStrategy: true, type: ErrorModel.self, data: response.data) { s in
+        json.implement(useKeyDecodingStrategy: true, type: ErrorModel.self, data: response.data) { [weak self] s in
+            guard let self = self else { return }
             guard s.success == false && s.errorCode == 57716 else { return }
             let _ = self.requestFailure(9999)
         }
