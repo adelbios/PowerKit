@@ -86,11 +86,13 @@ private extension PowerNetwork {
     }
     
     func didResponseSuccess(_ response: Response, target: TargetType) {
-        self.checkErrorModel(response)
-        self.printRespinseResultUsing(target, response: response, data: response.data)
-        guard requestFailure(response.statusCode) == false else { return }
-        guard checkIfDataCorrupted(response.data) == false else { return }
-        self.data = response.data
+        self.checkErrorModel(response) { [weak self] in
+            guard let self = self else { return }
+            self.printRespinseResultUsing(target, response: response, data: response.data)
+            guard self.requestFailure(response.statusCode) == false else { return }
+            guard self.checkIfDataCorrupted(response.data) == false else { return }
+            self.data = response.data
+        }
     }
     
     func didRequestFailure(_ moyaError : MoyaError){
@@ -134,11 +136,11 @@ private extension PowerNetwork {
         return self.requestFailure(9999)
     }
     
-    func checkErrorModel(_ response: Response) {
+    func checkErrorModel(_ response: Response, _ completion: @escaping () -> ()) {
         let json = JSONDecoder()
         json.implement(useKeyDecodingStrategy: true, type: ErrorModel.self, data: response.data) { [weak self] s in
             guard let self = self else { return }
-            guard s.success == false && s.errorCode == 57716 else { return }
+            guard s.success == false && s.errorCode == 57716 else { completion(); return }
             let _ = self.requestFailure(9999)
         }
     }
