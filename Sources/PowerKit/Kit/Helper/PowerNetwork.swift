@@ -10,6 +10,11 @@ import JGProgressHUD
 import Moya
 import Combine
 
+private struct ErrorModel: Codable {
+    let success: Bool
+    let errorCode: Int
+}
+
 open class PowerNetwork: NSObject {
     
     //MARK: - Variables
@@ -81,6 +86,7 @@ private extension PowerNetwork {
     }
     
     func didResponseSuccess(_ response: Response, target: TargetType) {
+        self.checkErrorModel(response)
         self.printRespinseResultUsing(target, response: response, data: response.data)
         guard requestFailure(response.statusCode) == false else { return }
         guard checkIfDataCorrupted(response.data) == false else { return }
@@ -126,6 +132,14 @@ private extension PowerNetwork {
     func checkIfDataCorrupted(_ data: Data) -> Bool {
         guard data.isEmpty else { return false }
         return self.requestFailure(9999)
+    }
+    
+    func checkErrorModel(_ response: Response) {
+        let json = JSONDecoder()
+        json.implement(useKeyDecodingStrategy: true, type: ErrorModel.self, data: response.data) { s in
+            guard s.success == false && s.errorCode == 57716 else { return }
+            let _ = self.requestFailure(9999)
+        }
     }
     
 }
