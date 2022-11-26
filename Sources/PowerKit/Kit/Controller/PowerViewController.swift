@@ -4,7 +4,6 @@
 //
 //  Created by adel radwan on 18/10/2022.
 //
-
 import UIKit
 import Combine
 
@@ -17,10 +16,13 @@ open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, 
     
     //MARK: - Variables
     open var powerSettings = PowerSettings()
-    
     open var viewModel = Z()
     
+    private var isRequestReloadingFromPullToRefresh = false
+    private var returnEmptyHeaderView: Bool = false
     private var diffableDataSource: diffable?
+    private var itemInSection = [AnyHashable]()
+    private var supplementaryView = PowerHeaderFooterDiffableView()
     
     //MARK: - UI Variables
     open lazy var collectionView: PowerCollectionView = {
@@ -30,11 +32,6 @@ open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, 
         collectionView.alwaysBounceVertical = true
         collectionView.prefetchDataSource = self
         return collectionView
-    }()
-    
-    private var activityIndicator: UIActivityIndicatorView = {
-        let view = UIActivityIndicatorView(style: .large)
-        return view
     }()
     
     
@@ -52,15 +49,15 @@ open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, 
         observeEmptyViewActionButtonClicked()
         eventForCustomCell()
         setupPullToRefresh()
-        setupActivityIndicatorUI()
+        reloadSections()
+        observeItemExpanding()
     }
     
     //MARK: - Override func
     open func settingConfigure() {
     }
     
-    open func showAlertForInternetConnectionError(title: String, message: String) {
-        
+    open func onInternetErrorEventFire(title: String, message: String) {
     }
     
     //MARK: - Collection View Protocol
@@ -86,11 +83,11 @@ open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, 
     public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         scrollViewDidFinished(scrollView)
     }
-
+    
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         scrollViewDidFinished(scrollView)
     }
-
+    
     public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if !decelerate {
             scrollViewDidFinished(scrollView)
@@ -125,143 +122,12 @@ open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, 
 private extension PowerViewController {
     
     func settings() {
-        self.view.isSkeletonable = true
-        self.collectionView.isSkeletonable = true
-        PowerNetworkReachability.shared.startListening()
+        view.isSkeletonable = true
+        collectionView.isSkeletonable = true
         viewModel.viewController = self
         viewModel.collectionView = self.collectionView
+        PowerNetworkReachability.shared.startListening()
     }
-    
-    func setupActivityIndicatorUI() {
-        guard powerSettings.loadContentType == .normal else { return }
-        collectionView.backgroundView = activityIndicator
-    }
-    
-}
-
-
-//MARK: - Request Status
-private extension PowerViewController {
-    
-    func requestStatusLoading() {
-        guard PowerNetworkReachability.shared.isReachable == true else { return }
-        self.collectionView.setBackground(mode: .without)
-        switch self.viewModel.isPowerItemsModelEmpty {
-        case true:
-            self.setDwonloadContentStyle()
-        case false:
-            guard self.powerSettings.showSkeletonWhenPowerItemIsNotEmpty == true else { return }
-            self.setDwonloadContentStyle()
-        }
-        
-    }
-    
-    func requestStatusFinished() {
-        endDownloadContentStyle()
-        collectionView.termnatePullToRefresh()
-    }
-    
-}
-
-//MARK: - Diffable
-private extension PowerViewController {
-    
-    func createDiffableDataSource() {
-        diffableDataSource = diffable(
-            collectionView: collectionView, registeredCells: viewModel.registeredCellsModel,
-            cellProvider: { collectionView, indexPath, models in
-                let model = (models as! PowerCells)
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: type(of: model).cellId, for: indexPath)
-                cell.semanticContentAttribute = .forceRightToLeft
-                model.configure(cell: cell)
-                return cell
-            })
-    }
-    
-    func createDiffableSections() {
-        diffableDataSource?.supplementaryViewProvider = { [weak self] (collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? in
-            guard let self = self else { return UICollectionReusableView() }
-            var powerCell: PowerCells?
-            let model = self.viewModel.powerItemsModel[indexPath.section]
-            
-            switch kind {
-            case UICollectionView.elementKindSectionHeader:
-                powerCell = model.itemSection?.cell
-                
-            case UICollectionView.elementKindSectionFooter:
-                powerCell = model.loadMoreSection?.cell
-            default:
-                break
-            }
-            
-            guard let powerCell else { return UICollectionReusableView() }
-            let cell = collectionView.dequeueReusableSupplementaryView(
-                ofKind: kind,
-                withReuseIdentifier: type(of: powerCell).cellId,
-                for: indexPath
-            )
-            
-            
-            cell.semanticContentAttribute = .forceRightToLeft
-            powerCell.configure(cell: cell)
-            self.viewModel.action.invoke(action: .headerVisible, cell: cell, configurator: powerCell, indexPath: indexPath)
-            
-            return cell
-        }
-    }
-    
-    func updateDiffableDataSource(isSettings: Bool) {
-        guard PowerNetworkReachability.shared.isReachable == true else { return }
-        var snapshot = snapshots()
-        snapshot.appendSections(self.viewModel.powerItemsModel.map({ $0.section }))
-        self.reloadSections(snapshot: &snapshot)
-        self.appendItemUsing(snapshot: &snapshot, isSettings: isSettings)
-        self.collectionView.stopSkeleton()
-        self.diffableDataSource?.apply(
-            snapshot,
-            animatingDifferences: powerSettings.animatingDifferences
-        )
-    }
-    
-    func appendItemUsing(snapshot: inout snapshots, isSettings: Bool) {
-        viewModel.powerItemsModel.forEach { model in
-            switch model.isItemVisible && self.collectionView.mode != .error {
-            case true:
-                appendForVisibleItem(model, snapshot: &snapshot, isSettings: isSettings)
-            case false:
-                snapshot.deleteItems(model.item)
-            }
-        }
-    }
-    
-    func appendForVisibleItem(_ item: PowerItemModel, snapshot: inout snapshots, isSettings: Bool) {
-        guard viewModel.network.status == .finished else { return }
-        let isEmptyUsed = item.item.isEmpty && item.emptyCell != nil
-        switch isEmptyUsed {
-        case true:
-            if powerSettings.keepSectionVisibaleForEmptyPowerItem == false {
-                self.collectionView.setBackground(mode: .empty)
-                item.layout.boundarySupplementaryItems = []
-            } else {
-                snapshot.appendItems([item.emptyCell!], toSection: item.section)
-            }
-            
-        case false:
-            let value = powerSettings.keepSectionVisibaleForEmptyPowerItem == false && item.item.isEmpty
-            collectionView.setBackground(mode: value ? .empty : .without)
-            item.layout.boundarySupplementaryItems = item.boundarySupplementaryItem
-            snapshot.appendItems(item.item, toSection: item.section)
-        }
-        
-    }
-    
-    func reloadSections(snapshot: inout snapshots) {
-        guard let sec = viewModel.sectionChangedIdentifier else { return }
-        snapshot.reloadSections([sec])
-        viewModel.sectionChangedIdentifier = nil
-    }
-    
-    
     
 }
 
@@ -274,7 +140,7 @@ private extension PowerViewController {
             .filter { $0 == true }
             .sink { [weak self] _ in
                 guard let self else { return }
-                self.updateDiffableDataSource(isSettings: false)
+                self.setupSnapshot(isSettings: false)
             }.store(in: &viewModel.subscription)
     }
     
@@ -284,10 +150,9 @@ private extension PowerViewController {
             .filter { $0 == true }
             .sink { [weak self] _ in
                 guard let self else { return }
-                self.updateDiffableDataSource(isSettings: true)
+                self.setupSnapshot(isSettings: true)
             }.store(in: &viewModel.subscription)
     }
-    
     
     func observeRequestStatus() {
         self.viewModel.network.$status
@@ -317,6 +182,7 @@ private extension PowerViewController {
             .compactMap { $0 }
             .sink { [weak self] _ in
                 guard let self else { return }
+                self.isRequestReloadingFromPullToRefresh = false
                 self.reloadRequest()
             }.store(in: &viewModel.subscription)
     }
@@ -324,12 +190,164 @@ private extension PowerViewController {
 }
 
 
+//MARK: - Request Status
+private extension PowerViewController {
+    
+    func requestStatusLoading() {
+        guard PowerNetworkReachability.shared.isReachable == true else { return }
+        guard isRequestReloadingFromPullToRefresh == false else { return }
+        guard let isEmpty = viewModel.isEmptyDataEventFire else { setDwonloadContentStyle(); return }
+        switch isEmpty {
+        case true:
+            setDwonloadContentStyle()
+        case false:
+            guard powerSettings.showSkeletonWhenItemsIsNotEmpty == true else { return }
+            setDwonloadContentStyle()
+        }
+    }
+    
+    func requestStatusFinished() {
+        endDownloadContentStyle()
+        collectionView.termnatePullToRefresh()
+    }
+    
+}
+
+//MARK: - Diffable
+private extension PowerViewController {
+    
+    func createDiffableDataSource() {
+        diffableDataSource = diffable(
+            collectionView: collectionView,
+            registeredCells: viewModel.registeredCellsModel,
+            cellProvider: { collectionView, indexPath, models in
+                let model = (models as! PowerCells)
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: type(of: model).cellId, for: indexPath)
+                cell.semanticContentAttribute = .forceRightToLeft
+                model.configure(cell: cell)
+                return cell
+            })
+    }
+    
+    func createDiffableSections() {
+        diffableDataSource?.supplementaryViewProvider = { [weak self] (collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? in
+            guard let self = self else { return UICollectionReusableView() }
+            return self.supplementaryView.build(
+                settings: self.viewModel.powerItemsModel, status: self.viewModel.network.status, kind: kind,
+                collectionView: collectionView, indexPath: indexPath,
+                useEmptyHeader: self.returnEmptyHeaderView, action: self.viewModel.action
+            )
+            
+        } // End Of supplementaryViewProvider
+    }
+    
+}
+
+//MARK: - Snapshot
+private extension PowerViewController {
+    
+    
+    func setupSnapshot(isSettings: Bool) {
+        guard PowerNetworkReachability.shared.isReachable == true else { return }
+        var snapshot = snapshots()
+        snapshot.appendSections(self.viewModel.powerItemsModel.map({ $0.section }))
+        createNewDiffableItemsUing(snapshot: &snapshot, issettings: isSettings)
+        stopSkeleton(isSettings)
+        diffableDataSource?.apply(snapshot, animatingDifferences: powerSettings.animatingDifferences) { [weak self] in
+            guard let self = self else { return }
+            guard self.viewModel.isFetchMoreData == false else { return }
+            self.collectionView.collectionViewLayout.invalidateLayout()
+        }
+    }
+    
+    func createNewDiffableItemsUing(snapshot: inout snapshots, issettings: Bool) {
+        guard issettings == false else { return }
+        guard collectionView.mode != .error else { return }
+        self.returnEmptyHeaderView = false
+        let itemCount = viewModel.powerItemsModel.filter { $0.items.isEmpty }.count
+        let isItemEmpty = viewModel.powerItemsModel.count == itemCount
+        viewModel.setItems(isEmpty: isItemEmpty)
+        viewModel.powerItemsModel.forEach {
+            appendNewItems($0, isEmpty: isItemEmpty, snap: &snapshot)
+        }
+    }
+    
+    func appendNewItems(_ model: PowerItemModel, isEmpty: Bool, snap: inout snapshots) {
+        switch isEmpty {
+        case true:
+            snapshotForEmptyItems(model: model, snapshot: &snap)
+        case false:
+            snapshotForNotEmptyItems(model: model, snapshot: &snap)
+        }
+        
+        snap.appendItems(model.items, toSection: model.section)
+    }
+    
+    
+    func snapshotForNotEmptyItems(model: PowerItemModel, snapshot: inout snapshots) {
+        collectionView.setBackground(mode: .without)
+        guard let itemSection = model.itemSection, model.section == itemSection.sectionIndex else { return }
+        guard model.items.isEmpty else { return }
+        guard let emptyCell = model.emptyCell else { return }
+        snapshot.appendItems([emptyCell], toSection: model.section)
+    }
+    
+    
+    func snapshotForEmptyItems(model: PowerItemModel, snapshot: inout snapshots) {
+        switch self.powerSettings.keepSectionVisibaleForEmptyPowerItem == true {
+        case false:
+            collectionView.setBackground(mode: .empty)
+            returnEmptyHeaderView = true
+        case true:
+            guard let emptyCell = model.emptyCell else { return }
+            snapshot.appendItems([emptyCell], toSection: model.section)
+            self.returnEmptyHeaderView = false
+        } // End inner switch
+        
+    }
+    
+    
+    func reloadSections() {
+        viewModel.$sectionChangedIdentifier
+            .compactMap { $0 }
+            .sink { [weak self] in
+                guard let self = self else { return }
+                guard var snapshot = self.diffableDataSource?.snapshot() else { return }
+                snapshot.reloadSections([$0])
+                let animation = self.powerSettings.animatingDifferencesForReloadSection
+                self.stopSkeleton(false)
+                self.diffableDataSource?.apply(snapshot, animatingDifferences: animation)
+            }.store(in: &viewModel.subscription)
+    }
+    
+    func observeItemExpanding() {
+        viewModel.$isItemExpanding
+            .compactMap { $0 }
+            .sink { [weak self] (value: Bool, section: Int) in
+                guard let self = self else { return }
+                guard var snapshot = self.diffableDataSource?.snapshot() else { return }
+                let item = snapshot.itemIdentifiers(inSection: section)
+                if self.itemInSection.isEmpty == true { self.itemInSection = item }
+                value == true ? snapshot.deleteItems(item) : snapshot.appendItems(self.itemInSection)
+                self.diffableDataSource?.apply(snapshot, animatingDifferences: true)
+            }.store(in: &viewModel.subscription)
+        
+    }
+    
+}
+
 //MARK: - Helper
 extension PowerViewController {
+    
+    func stopSkeleton(_ isSettings: Bool) {
+        guard viewModel.network.status == .finished && isSettings == false else { return }
+        self.collectionView.stopSkeleton()
+    }
     
     public func reloadRequest() {
         switch PowerNetworkReachability.shared.isReachable {
         case true:
+            self.collectionView.setBackground(mode: .loading)
             self.viewModel.makeHTTPRequest()
         case false:
             let model = self.viewModel.network.networkErrorModel
@@ -337,16 +355,17 @@ extension PowerViewController {
             let arMessage = "يبدو انه لايوجد إتصال بالإنترنت تاكد من اتصالك من خلال الشبكة الخلوية او شبكة WI-FI"
             let title = model == nil ? arTitle : model!.description
             let message = model == nil ? arMessage : model!.message
-            self.showAlertForInternetConnectionError(title: title, message: message)
+            self.onInternetErrorEventFire(title: title, message: message)
             self.collectionView.termnatePullToRefresh()
         }
     }
     
     
     private func configureErrorModel(_ model: PowerNetworkErrorLoadingModel) {
-        guard viewModel.isPowerItemsModelEmpty == true else { return }
+        let isEmpty = viewModel.isEmptyDataEventFire ?? true
+        guard isEmpty == true else { return }
         self.collectionView.setBackground(mode: .error)
-        viewModel.removeAll(keepSectionVisible: false)
+        self.returnEmptyHeaderView = true
         collectionView.emptyView.configure(
             viewType: .network, layoutPosition: .middle,
             title: model.description, message: model.message,
@@ -359,6 +378,7 @@ extension PowerViewController {
         guard powerSettings.isPullToRefreshUsed else { return }
         collectionView.pullToRefreh { [ weak self] in
             guard let self else { return }
+            self.isRequestReloadingFromPullToRefresh = true
             DispatchQueue.main.async { self.reloadRequest() }
         }
         
@@ -367,13 +387,14 @@ extension PowerViewController {
     
     private func fetchNextPage(_ indexPaths: [IndexPath]) {
         guard viewModel.powerItemsModel.isEmpty == false else { return }
-        indexPaths.forEach { indexPath in
+        indexPaths.forEach { [weak self] indexPath in
+            guard let self = self else { return }
             let model = self.viewModel.powerItemsModel[indexPath.section]
-            guard model.item.isEmpty == false else { return }
-            guard model.item.count - 1 == indexPath.item else { return }
+            guard model.items.isEmpty == false else { return }
+            guard model.items.count - 1 == indexPath.item else { return }
             guard let loadMore = model.loadMoreSection?.item else { return }
             guard loadMore.currentPage < loadMore.lastPage else { return }
-            viewModel.fetchNextPaging()
+            self.viewModel.fetchNextPaging()
         }
     }
     
@@ -408,35 +429,17 @@ extension PowerViewController {
         self.viewModel.action.invoke(action: .didDeSelect, cell: cell, configurator: model as! PowerCells, indexPath: indexPath)
     }
     
-    
 }
 
 //MARK: - DownloadContentStyle
 private extension PowerViewController {
     
     func setDwonloadContentStyle() {
-        switch powerSettings.loadContentType {
-        case .skeleton:
-            collectionView.startSkeleton()
-        case .normal:
-            activityIndicator.startAnimating()
-        case .custom(view: let downloadView):
-            downloadView.startAnimation()
-            collectionView.backgroundView = downloadView
-        }
+        collectionView.startSkeleton()
     }
     
     func endDownloadContentStyle() {
-        switch powerSettings.loadContentType {
-        case .skeleton:
-            collectionView.stopSkeleton()
-        case .normal:
-            activityIndicator.stopAnimating()
-        case .custom(view: let downloadView):
-            downloadView.stopAnimation()
-            collectionView.backgroundView = nil
-        }
+        collectionView.stopSkeleton()
     }
-    
     
 }

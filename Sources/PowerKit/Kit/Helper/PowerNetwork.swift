@@ -11,8 +11,8 @@ import Moya
 import Combine
 
 private struct ErrorModel: Codable {
-    let success: Bool
-    let errorCode: Int
+    let success: Bool?
+    let errorCode: Int?
 }
 
 open class PowerNetwork: NSObject {

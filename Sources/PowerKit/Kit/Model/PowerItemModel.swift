@@ -11,40 +11,35 @@ import UIKit
 open class PowerItemModel {
     
     public final let section: Int
-    final let registeredCells: [RegisteredCellsModel]
-    open var itemSection: ItemSection?
     open var loadMoreSection: PowerLoadMoreModel?
     open var emptyCell: PowerCells?
     open var layout: NSCollectionLayoutSection!
-    open var item = [PowerCells]()
+    open var items = [PowerCells]()
+    internal var itemSection: PowerItemSection?
     
-    open var isItemVisible: Bool = true
-    open var boundarySupplementaryItem = [NSCollectionLayoutBoundarySupplementaryItem]()
     
     //MARK: - .init
     public init(
-        section: Int, itemSection: ItemSection? = nil, loadMoreSection: PowerLoadMoreModel? = nil,
-        emptyCell: PowerCells? = nil, layout: LayoutKind, registeredCells: [RegisteredCellsModel]
-    ) {
-        
-        self.section = section
-        self.layout = layout.rawValue
-        self.itemSection = itemSection
-        self.loadMoreSection = loadMoreSection
-        self.emptyCell = emptyCell
-        self.registeredCells = registeredCells
-        
-        if let itemSection {
-            self.layout.boundarySupplementaryItems = [create(itemSection)]
-            self.boundarySupplementaryItem = [create(itemSection)]
+            section: Int, loadMoreSection: PowerLoadMoreModel? = nil,
+            emptyCell: PowerCells? = nil, itemSection: PowerItemSection? = nil,
+            layout: LayoutKind
+        ) {
+            
+            self.section = section
+            self.itemSection = itemSection
+            self.layout = layout.rawValue
+            self.loadMoreSection = loadMoreSection
+            self.emptyCell = emptyCell
+
+            if let itemSection {
+                self.layout.boundarySupplementaryItems.append(createItemSection(itemSection))
+            }
+
+            if let loadMoreSection {
+                self.layout.boundarySupplementaryItems.append(createLoadMoreSection(loadMoreSection))
+            }
+    
         }
-        
-        if let loadMoreSection {
-            self.layout.boundarySupplementaryItems += [createLoadMoreSection(loadMoreSection)]
-            self.boundarySupplementaryItem += [createLoadMoreSection(loadMoreSection)]
-        }
-        
-    }
     
     //MARK: - Check For Layout Kind
     public enum LayoutKind: Hashable, Equatable {
@@ -76,6 +71,9 @@ open class PowerItemModel {
         
     }
     
+    internal func removeHeader(model: PowerItemModel?) {
+        model?.layout.boundarySupplementaryItems.removeAll { $0.elementKind == UICollectionView.elementKindSectionHeader }
+    }
     
 }
 
@@ -84,7 +82,7 @@ extension PowerItemModel: Hashable {
     
     
     public static func == (lhs: PowerItemModel, rhs: PowerItemModel) -> Bool {
-        lhs.section == rhs.section
+        return lhs.section == rhs.section
     }
     
     public func hash(into hasher: inout Hasher) {
@@ -93,11 +91,10 @@ extension PowerItemModel: Hashable {
     
 }
 
-//MARK: - Create Item Section
-public extension PowerItemModel {
+//MARK: - Item Section
+internal extension PowerItemModel {
     
-    func create(_ itemSection: 
-                ItemSection) -> NSCollectionLayoutBoundarySupplementaryItem {
+    func createItemSection(_ itemSection: PowerItemSection) -> NSCollectionLayoutBoundarySupplementaryItem {
         let z = NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: itemSection.size,
             elementKind: UICollectionView.elementKindSectionHeader,
@@ -109,9 +106,9 @@ public extension PowerItemModel {
     }
     
     
-    func createLoadMoreSection(_ section: PowerLoadMoreModel) -> NSCollectionLayoutBoundarySupplementaryItem {
+    private func createLoadMoreSection(_ section: PowerLoadMoreModel) -> NSCollectionLayoutBoundarySupplementaryItem {
         return NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: .init(widthDimension: .absolute(30), heightDimension: .absolute(40)),
+            layoutSize: .init(widthDimension: .fractionalWidth(0.9), heightDimension: .estimated(40)),
             elementKind: UICollectionView.elementKindSectionFooter,
             alignment: section.alignment
         )

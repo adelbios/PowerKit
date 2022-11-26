@@ -12,11 +12,12 @@ open class PowerCollectionView: UICollectionView {
     //MARK: - Variables
     public let emptyView = PowerEmptyView()
     
-    var mode: BackgroundViewMode = .without
+    internal var mode: BackgroundViewMode = .without
     
     public enum BackgroundViewMode {
         case error
         case empty
+        case loading
         case without
     }
     

@@ -24,16 +24,18 @@ public struct RegisteredCellsModel {
     
     //MARK: - Header
     public struct Header {
-        
-        public let header: UICollectionViewCell.Type
+        public let cell: UICollectionViewCell.Type
         public let fromNib: Bool
-        public let kind = UICollectionView.elementKindSectionHeader
+        public let isSkeletonEnable: Bool
         
-        public init(_ header: UICollectionViewCell.Type, fromNib: Bool = false) {
-            self.header = header
+        public init(_ cell: UICollectionViewCell.Type, fromNib: Bool = false, isSkeletonEnable: Bool = true) {
+            self.cell = cell
             self.fromNib = fromNib
+            self.isSkeletonEnable = isSkeletonEnable
         }
         
     }
     
 }
+
+
