@@ -11,6 +11,7 @@ import Combine
 open class PowerViewModel<T: Codable>: NSObject {
     
     //MARK: - Public Variables
+    open private(set) var powerItemsModel = [PowerItemModel]()
     open var subscription = Set<AnyCancellable>()
     open weak var viewController: UIViewController?
     open weak var collectionView: UICollectionView?
@@ -23,7 +24,6 @@ open class PowerViewModel<T: Codable>: NSObject {
     }
     
     //MARK: - private Variables
-    open private(set) var powerItemsModel = [PowerItemModel]()
     private(set) var isFetchMoreData: Bool = false
     private(set) var registeredCellsModel = [RegisteredCellsModel]()
     private var spaceBetweenEachSections: CGFloat = 0
