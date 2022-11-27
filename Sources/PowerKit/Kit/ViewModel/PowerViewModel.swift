@@ -76,6 +76,8 @@ open class PowerViewModel<T: Codable>: NSObject {
     
     open func didFetchModels(_ model: T) {
     }
+    open func didFetchModels(_ model: T, data: Data) {
+    }
     
     open func makeHTTPRequest(){
         self.requestType = .get
@@ -372,6 +374,7 @@ private extension PowerViewModel {
                 guard let self = self else { return }
                 self.json.implement(useKeyDecodingStrategy: false, type: T.self, data: data){
                     self.didFetchModels($0)
+                    self.didFetchModels($0, data: data)
                     self.didRequestCompleteEvent = true
                 }
             }.store(in: &subscription) // Store subscripton to cancelled when dienit calling
