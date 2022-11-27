@@ -23,7 +23,7 @@ open class PowerViewModel<T: Codable>: NSObject {
     }
     
     //MARK: - private Variables
-    internal var powerItemsModel = [PowerItemModel]()
+    open private(set) var powerItemsModel = [PowerItemModel]()
     private(set) var isFetchMoreData: Bool = false
     private(set) var registeredCellsModel = [RegisteredCellsModel]()
     private var spaceBetweenEachSections: CGFloat = 0
