@@ -113,3 +113,19 @@ internal extension UICollectionView {
     }
     
 }
+
+public extension NSCollectionLayoutSize {
+    
+    static func dynamic(estimatedValue: CGFloat) -> NSCollectionLayoutSize {
+        return .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(estimatedValue))
+    }
+    
+    static func fixd(height: CGFloat) -> NSCollectionLayoutSize {
+        return .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(height))
+    }
+    
+    static func setDimension(width: NSCollectionLayoutDimension, height: NSCollectionLayoutDimension) -> NSCollectionLayoutSize {
+        return .init(widthDimension: width, heightDimension: height)
+    }
+    
+}
