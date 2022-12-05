@@ -16,8 +16,8 @@ public struct PowerSettings {
     /// this flag used to show skeleton loading or not if there is powerCell in powerModel (Is not empty), default value is false
     public var showSkeletonWhenItemsIsNotEmpty = false
     
-    /// Keep Section visible when items in each section is Empty but When set this flag to false, the section layout will be heading & Empty Cells either (that added in settings), default value is true
-    public var keepSectionVisibaleForEmptyPowerItem = true
+    /// Keep Section visible when items in each section is Empty but When set this flag to false, the section layout will be heading & Empty Cells either (that added in settings), default value is false
+    public var keepSectionVisibaleForEmptyPowerItem = false
     
     /// Used for collectionView update diffable data source animation, default value is true
     public var animatingDifferences = true
