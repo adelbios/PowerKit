@@ -141,8 +141,12 @@ public extension PowerViewModel {
     ///   - item: When new item is alrady existi in (viewModel.powerItemsModel) nothing happens
     ///   - forSection: To add new item at specific section
     ///   - at: Used for append or insert, so when ignoring this we append new item
-    func addNew(headerItem: PowerCells? = nil, item:  PowerCells, forSection: Int, at: Int? = nil) {
-        createViewModel.addNewTo(powerItemsModel, header: headerItem, newItems: [item], section: forSection, at: at)
+    ///   - removeOld: Used for remove previous item to avoid dubplication sometimes, defualt value is false
+    func addNew(headerItem: PowerCells? = nil, item:  PowerCells, forSection: Int, at: Int? = nil, removeOld: Bool = false) {
+        createViewModel.addNewTo(
+            powerItemsModel, header: headerItem, newItems: [item],
+            section: forSection, at: at, removeOld: removeOld
+        )
         self.isReloadEventFire = true
     }
     
@@ -152,8 +156,12 @@ public extension PowerViewModel {
     ///   - items: When new collection of items is alrady existi in (viewModel.powerItemsModel) nothing happens
     ///   - forSection: To add new item at specific section, it's work only when new items has same type of PowerCells
     ///   - at: Used for append or insert, so when ignoring this we append new item
-    func addNew(headerItem: PowerCells? = nil, items:  [PowerCells], forSection: Int, at: Int? = nil) {
-        createViewModel.addNewTo(powerItemsModel, header: headerItem, newItems: items, section: forSection, at: at)
+    ///   - removeOld: Used for remove previous item to avoid dubplication sometimes, defualt value is false
+    func addNew(headerItem: PowerCells? = nil, items:  [PowerCells], forSection: Int, at: Int? = nil, removeOld: Bool = false) {
+        createViewModel.addNewTo(
+            powerItemsModel, header: headerItem, newItems: items,
+            section: forSection, at: at, removeOld: removeOld
+        )
         self.isReloadEventFire = true
     }
     

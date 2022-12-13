@@ -39,7 +39,9 @@ internal class HelperViewModel: NSObject {
         guard let model = settings.first(where: { $0.section == section }) else { sectionFatelError(); return }
         model.items.removeAll()
         updateHeader(headerData, settings: model)
-        item.forEach { createViewModel.appendOrInsertNewItem(at: nil, powerItemModel: model, newItem: $0, forSection: section) }
+        item.forEach {
+            createViewModel.appendOrInsertNewItem(at: nil, powerItemModel: model, newItem: $0, forSection: section, removeOld: false)
+        }
         self.reloadUI = true
     }
     
