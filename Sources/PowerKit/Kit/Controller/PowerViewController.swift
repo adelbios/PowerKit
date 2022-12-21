@@ -435,6 +435,7 @@ extension PowerViewController {
 private extension PowerViewController {
     
     func setDwonloadContentStyle() {
+        collectionView.setBackground(mode: .loading)
         collectionView.startSkeleton()
     }
     
