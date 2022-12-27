@@ -20,6 +20,8 @@ open class PowerNetwork: NSObject {
     //MARK: - Variables
     enum RequestStatus { case loading, finished }
     
+    private var isReuestLoading: Bool = false
+    
     private var isLoadingInBackground: Bool = false
     
     private let loadingView = JGProgressHUD(style: .extraLight)
@@ -54,7 +56,8 @@ open class PowerNetwork: NSObject {
     
     open func request(_ target: TargetType, at view: UIView? = nil, printOutResult: Bool = false, withProgress: Bool = false){
         self.printResultOut = printOutResult
-//        guard self.status == .finished else { return }
+        guard self.isReuestLoading == false else { return }
+        self.isReuestLoading = true
         self.status = .loading
         self.showLoadingViewAt(view)
         self.completeRequest(target)
@@ -78,8 +81,10 @@ private extension PowerNetwork {
         } completion: { result in
             switch result {
             case .failure(let error):
+                self.isReuestLoading = false
                 self.didRequestFailure(error)
             case .success(let response):
+                self.isReuestLoading = false
                 self.didResponseSuccess(response, target: target)
             }
         }
