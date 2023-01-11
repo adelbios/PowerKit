@@ -389,11 +389,14 @@ extension PowerViewController {
         guard viewModel.powerItemsModel.isEmpty == false else { return }
         indexPaths.forEach { [weak self] indexPath in
             guard let self = self else { return }
+            print("ZZZZZ")
             let model = self.viewModel.powerItemsModel[indexPath.section]
             guard model.items.isEmpty == false else { return }
-            guard model.items.count - 1 == indexPath.item else { return }
+            print("YYYY")
+//            guard model.items.count - 1 == indexPath.item else { return }
             guard let loadMore = model.loadMoreSection?.item else { return }
-            guard loadMore.currentPage < loadMore.lastPage else { return }
+//            guard loadMore.currentPage < loadMore.lastPage else { return }
+            print("XXXXXX")
             self.viewModel.fetchNextPaging()
         }
     }
