@@ -386,6 +386,8 @@ extension PowerViewController {
     
     
     private func fetchNextPage(_ indexPaths: [IndexPath]) {
+        print("FETCH NEXT")
+        log(type: .success, "fetchNextPage")
         guard viewModel.powerItemsModel.isEmpty == false else { return }
         indexPaths.forEach { [weak self] indexPath in
             guard let self = self else { return }
