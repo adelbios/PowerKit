@@ -26,8 +26,8 @@ open class PowerLoadMoreModel {
     }
     
     open class Item: Hashable {
-        var currentPage: Int
-        var lastPage: Int
+       public var currentPage: Int
+       public var lastPage: Int
         
         public init(currentPage: Int, lastPage: Int) {
             self.currentPage = currentPage
