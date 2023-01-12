@@ -62,7 +62,6 @@ open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, 
     
     //MARK: - Collection View Protocol
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        fetchNextPage(indexPaths)
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -95,6 +94,10 @@ open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, 
     }
     
     open func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        let distance = scrollView.contentSize.height - (targetContentOffset.pointee.y + scrollView.bounds.height)
+        guard let section = viewModel.paginationSection, distance < 200  else { return }
+        self.fetchNextPage(section: section)
+        
     }
     
     /// Change color for both self.view & self.collectionView
@@ -385,20 +388,14 @@ extension PowerViewController {
     }
     
     
-    private func fetchNextPage(_ indexPaths: [IndexPath]) {
-        print("FETCH NEXT")
-        log(type: .success, "fetchNextPage")
-        guard viewModel.powerItemsModel.isEmpty == false else { return }
-        indexPaths.forEach { [weak self] indexPath in
+    private func fetchNextPage(section: Int) {
+        let model = viewModel.powerItemsModel[section]
+        guard model.items.isEmpty == false, let loadMore = model.loadMoreSection?.item, loadMore.currentPage < loadMore.lastPage else {
+            return
+        }
+        
+        DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            print("ZZZZZ")
-            let model = self.viewModel.powerItemsModel[indexPath.section]
-            guard model.items.isEmpty == false else { return }
-            print("YYYY")
-//            guard model.items.count - 1 == indexPath.item else { return }
-            guard let loadMore = model.loadMoreSection?.item else { return }
-//            guard loadMore.currentPage < loadMore.lastPage else { return }
-            print("XXXXXX")
             self.viewModel.fetchNextPaging()
         }
     }

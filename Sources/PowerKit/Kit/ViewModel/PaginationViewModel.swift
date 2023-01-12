@@ -37,7 +37,7 @@ internal class PaginationViewModel: NSObject {
 }
 
 //MARK: - Helper
-private extension PaginationViewModel {
+extension PaginationViewModel {
     
     func fetchLoadMoreModel(settings: [PowerItemModel], section: Int) -> PowerLoadMoreModel.Item? {
         guard settings.isEmpty == false else { return nil }

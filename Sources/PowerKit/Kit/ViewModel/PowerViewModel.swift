@@ -26,6 +26,7 @@ open class PowerViewModel<T: Codable>: NSObject {
     //MARK: - private Variables
     private(set) var isFetchMoreData: Bool = false
     private(set) var registeredCellsModel = [RegisteredCellsModel]()
+    private(set) var paginationSection: Int?
     private var spaceBetweenEachSections: CGFloat = 0
     private var requestType: RequestType = .get
     private let createViewModel = CreateViewModel()
@@ -325,6 +326,14 @@ public extension PowerViewModel {
     /// - Returns: new page number
      func increaseCurrentPage(forSection: Int) -> Int? {
         paginationViewModel.increaseCurrentPage(settings: powerItemsModel, section: forSection)
+    }
+    
+    /// Get model that used in pagination
+    /// - Parameter section: To set correct section
+    /// - Returns: PowerLoadMoreModel.Item with nil value
+    func getLoadMoreModel(section: Int) -> PowerLoadMoreModel.Item? {
+        paginationSection = section
+        return paginationViewModel.fetchLoadMoreModel(settings: powerItemsModel, section: section)
     }
     
     
