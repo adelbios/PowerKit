@@ -37,7 +37,7 @@ open class PowerViewModel<T: Codable>: NSObject {
     
     //MARK: - Combine Variables
     @Published open private(set) var didRequestCompleteEvent: Bool?
-    @Published open private(set) var isEmptyDataEventFire: Bool? 
+    @Published open private(set) var isEmptyDataEventFire: Bool?
     @Published private(set) var isReloadEventFire: Bool?
     @Published private(set) var isAddSettingsEventFire: Bool?
     @Published private(set) var isItemExpanding: (value: Bool, section: Int)?
@@ -324,7 +324,7 @@ public extension PowerViewModel {
     /// Increase number of current page to fetch next Page, Note: Use this function when web services response has not (current page & last page) values, but use the next page URL Link
     /// - Parameter forSection: increase it for specific section
     /// - Returns: new page number
-     func increaseCurrentPage(forSection: Int) -> Int? {
+    func increaseCurrentPage(forSection: Int) -> Int? {
         paginationViewModel.increaseCurrentPage(settings: powerItemsModel, section: forSection)
     }
     
@@ -343,7 +343,8 @@ public extension PowerViewModel {
     ///   - section: update it for specific section
     ///   - currentPage: new current page
     ///   - lastPage: new last Page
-     func updateLoadMore(section: Int, currentPage: Int? = nil, lastPage: Int? = nil) {
+    func updateLoadMore(section: Int, currentPage: Int? = nil, lastPage: Int? = nil) {
+        paginationSection = section
         paginationViewModel.updateLoadMore(
             settings: powerItemsModel,
             section: section,
@@ -374,7 +375,7 @@ internal extension PowerViewModel {
         let config = UICollectionViewCompositionalLayoutConfiguration()
         config.interSectionSpacing = self.spaceBetweenEachSections
         layout.configuration = config
-    
+        
         return layout
     }
     
@@ -407,7 +408,7 @@ private extension PowerViewModel {
                 self.onInternetErrorEventFire(title: model.description, message: model.message)
             }.store(in: &subscription)
     }
-
+    
     
 }
 
