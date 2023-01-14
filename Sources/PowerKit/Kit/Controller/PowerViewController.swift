@@ -390,10 +390,7 @@ extension PowerViewController {
     
     private func fetchNextPage(section: Int) {
         let model = viewModel.powerItemsModel[section]
-        guard model.items.isEmpty == false, let loadMore = model.loadMoreSection?.item, loadMore.currentPage < loadMore.lastPage else {
-            return
-        }
-        
+        guard model.items.isEmpty == false, let loadMore = model.loadMoreSection?.item, loadMore.hasNextItem == true else { return }
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.viewModel.fetchNextPaging()

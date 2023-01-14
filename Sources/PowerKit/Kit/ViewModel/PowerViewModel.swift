@@ -321,21 +321,13 @@ public extension PowerViewModel {
 public extension PowerViewModel {
     
     
-    /// Increase number of current page to fetch next Page, Note: Use this function when web services response has not (current page & last page) values, but use the next page URL Link
-    /// - Parameter forSection: increase it for specific section
-    /// - Returns: new page number
-    func increaseCurrentPage(forSection: Int) -> Int? {
-        paginationViewModel.increaseCurrentPage(settings: powerItemsModel, section: forSection)
-    }
-    
     /// Get model that used in pagination
     /// - Parameter section: To set correct section
     /// - Returns: PowerLoadMoreModel.Item with nil value
     func getLoadMoreModel(section: Int) -> PowerLoadMoreModel.Item? {
         paginationSection = section
-        return paginationViewModel.fetchLoadMoreModel(settings: powerItemsModel, section: section)
+        return paginationViewModel.get(settings: powerItemsModel, section: section)
     }
-    
     
     /// Update Load more model, use this function in web serves response, NOTE: when you call this function and web service does not have (current page & last page) values avoid to pass current page, set last page value to be estemated value and check for last page if have next url or not
     ///  - Example: self.updateLoadMore(section: 0, lastPage: model.nextURL == nil ? nil : 50000)
@@ -343,13 +335,12 @@ public extension PowerViewModel {
     ///   - section: update it for specific section
     ///   - currentPage: new current page
     ///   - lastPage: new last Page
-    func updateLoadMore(section: Int, currentPage: Int? = nil, lastPage: Int? = nil) {
+    func updateLoadMore(section: Int, model: PowerLoadMoreModel.Item) {
         paginationSection = section
-        paginationViewModel.updateLoadMore(
+        paginationViewModel.set(
             settings: powerItemsModel,
             section: section,
-            currentPage: currentPage,
-            lastPage: lastPage
+            loadMoreModel: model
         )
     }
     

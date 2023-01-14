@@ -26,12 +26,7 @@ class PowerLoadMoreCell: PowerCollectionCell {
 extension PowerLoadMoreCell: PowerCellDelegate {
     
     func configure(data: PowerLoadMoreModel.Item) {
-        switch data.currentPage == data.lastPage {
-        case true:
-            activityIndicator.stopAnimating()
-        case false:
-            activityIndicator.startAnimating()
-        }
+        data.hasNextItem ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()
     }
     
 }
