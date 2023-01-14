@@ -11,6 +11,7 @@ import Combine
 open class PowerViewModel<T: Codable>: NSObject {
     
     //MARK: - Public Variables
+    public enum RequestType { case get, post }
     open private(set) var powerItemsModel = [PowerItemModel]()
     open var subscription = Set<AnyCancellable>()
     open weak var viewController: UIViewController?
@@ -28,14 +29,13 @@ open class PowerViewModel<T: Codable>: NSObject {
     private(set) var registeredCellsModel = [RegisteredCellsModel]()
     private(set) var paginationSection: Int?
     private var spaceBetweenEachSections: CGFloat = 0
-    private var requestType: RequestType = .get
     private let createViewModel = CreateViewModel()
     private let deleteViewModel = DeleteViewModel()
     private let helperViewModel = HelperViewModel()
     private let paginationViewModel = PaginationViewModel()
-    private enum RequestType { case get, post }
     
     //MARK: - Combine Variables
+    open private(set) var requestType: RequestType = .get
     @Published open private(set) var didRequestCompleteEvent: Bool?
     @Published open private(set) var isEmptyDataEventFire: Bool?
     @Published private(set) var isReloadEventFire: Bool?
