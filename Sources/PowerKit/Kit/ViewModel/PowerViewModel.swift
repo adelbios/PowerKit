@@ -11,6 +11,7 @@ import Combine
 open class PowerViewModel<T: Codable>: NSObject {
     
     //MARK: - Public Variables
+    open private(set) var requestType: RequestType = .get
     open private(set) var isFetchMoreData: Bool = false
     open private(set) var paginationModel: PowerPaginationModel?
     open var subscription = Set<AnyCancellable>()
@@ -29,6 +30,11 @@ open class PowerViewModel<T: Codable>: NSObject {
         return false
     }
     
+    public enum RequestType {
+        case get
+        case post
+    }
+    
     //MARK: - private Variables
     private let createViewModel = CreateViewModel()
     private let deleteViewModel = DeleteViewModel()
@@ -37,8 +43,6 @@ open class PowerViewModel<T: Codable>: NSObject {
     private(set) var paginationSection: Int?
     private(set) var isStaticList: Bool = false
     private var spaceBetweenEachSections: CGFloat = 0
-    private var requestType: RequestType = .get
-    private enum RequestType { case get, post }
     
     //MARK: - Combine Variables
     @Published open private(set) var didRequestCompleteEvent: Bool?
