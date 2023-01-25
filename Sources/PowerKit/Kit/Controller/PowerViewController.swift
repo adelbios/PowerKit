@@ -19,7 +19,6 @@ open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, 
     open var viewModel = Z()
     
     private var isRequestReloadingFromPullToRefresh = false
-    private var returnEmptyHeaderView: Bool = false
     private var diffableDataSource: diffable?
     private var itemInSection = [AnyHashable]()
     private var supplementaryView = PowerHeaderFooterDiffableView()
@@ -93,11 +92,17 @@ open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, 
         }
     }
     
-    open func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+    public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         let distance = scrollView.contentSize.height - (targetContentOffset.pointee.y + scrollView.bounds.height)
         guard let section = viewModel.paginationSection, distance < 200  else { return }
-        self.fetchNextPage(section: section)
-        
+        let model = self.viewModel.powerItemsModel[section]
+        guard model.items.isEmpty == false else { return }
+        guard let paginationModel = self.viewModel.paginationModel else { return }
+        guard paginationModel.current <= paginationModel.last else { return }
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.viewModel.fetchNextPaging()
+        }
     }
     
     /// Change color for both self.view & self.collectionView
@@ -235,12 +240,11 @@ private extension PowerViewController {
     func createDiffableSections() {
         diffableDataSource?.supplementaryViewProvider = { [weak self] (collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? in
             guard let self = self else { return UICollectionReusableView() }
-            return self.supplementaryView.build(
+            let x = self.supplementaryView.build(
                 settings: self.viewModel.powerItemsModel, status: self.viewModel.network.status, kind: kind,
-                collectionView: collectionView, indexPath: indexPath,
-                useEmptyHeader: self.returnEmptyHeaderView, action: self.viewModel.action
+                collectionView: collectionView, indexPath: indexPath, action: self.viewModel.action
             )
-            
+            return x
         } // End Of supplementaryViewProvider
     }
     
@@ -251,9 +255,19 @@ private extension PowerViewController {
     
     
     func setupSnapshot(isSettings: Bool) {
-        guard PowerNetworkReachability.shared.isReachable == true else { return }
+        if viewModel.isStaticList {
+            setupSnapshots(isSettings: isSettings)
+        } else {
+            guard PowerNetworkReachability.shared.isReachable == true else { return }
+            setupSnapshots(isSettings: isSettings)
+        }
+        
+    }
+    
+    
+    func setupSnapshots(isSettings: Bool) {
         var snapshot = snapshots()
-        snapshot.appendSections(self.viewModel.powerItemsModel.map({ $0.section }))
+        snapshot.appendSections(self.viewModel.powerItemsModel.map({ $0.section.id }))
         createNewDiffableItemsUing(snapshot: &snapshot, issettings: isSettings)
         stopSkeleton(isSettings)
         diffableDataSource?.apply(snapshot, animatingDifferences: powerSettings.animatingDifferences) { [weak self] in
@@ -266,7 +280,6 @@ private extension PowerViewController {
     func createNewDiffableItemsUing(snapshot: inout snapshots, issettings: Bool) {
         guard issettings == false else { return }
         guard collectionView.mode != .error else { return }
-        self.returnEmptyHeaderView = false
         let itemCount = viewModel.powerItemsModel.filter { $0.items.isEmpty }.count
         let isItemEmpty = viewModel.powerItemsModel.count == itemCount
         viewModel.setItems(isEmpty: isItemEmpty)
@@ -283,16 +296,15 @@ private extension PowerViewController {
             snapshotForNotEmptyItems(model: model, snapshot: &snap)
         }
         
-        snap.appendItems(model.items, toSection: model.section)
+        snap.appendItems(model.items, toSection: model.section.id)
     }
     
     
     func snapshotForNotEmptyItems(model: PowerItemModel, snapshot: inout snapshots) {
         collectionView.setBackground(mode: .without)
-        guard let itemSection = model.itemSection, model.section == itemSection.sectionIndex else { return }
         guard model.items.isEmpty else { return }
         guard let emptyCell = model.emptyCell else { return }
-        snapshot.appendItems([emptyCell], toSection: model.section)
+        snapshot.appendItems([emptyCell], toSection: model.section.id)
     }
     
     
@@ -300,11 +312,9 @@ private extension PowerViewController {
         switch self.powerSettings.keepSectionVisibaleForEmptyPowerItem == true {
         case false:
             collectionView.setBackground(mode: .empty)
-            returnEmptyHeaderView = true
         case true:
             guard let emptyCell = model.emptyCell else { return }
-            snapshot.appendItems([emptyCell], toSection: model.section)
-            self.returnEmptyHeaderView = false
+            snapshot.appendItems([emptyCell], toSection: model.section.id)
         } // End inner switch
         
     }
@@ -368,7 +378,6 @@ extension PowerViewController {
         let isEmpty = viewModel.isEmptyDataEventFire ?? true
         guard isEmpty == true else { return }
         self.collectionView.setBackground(mode: .error)
-        self.returnEmptyHeaderView = true
         collectionView.emptyView.configure(
             viewType: .network, layoutPosition: .middle,
             title: model.description, message: model.message,
@@ -385,16 +394,6 @@ extension PowerViewController {
             DispatchQueue.main.async { self.reloadRequest() }
         }
         
-    }
-    
-    
-    private func fetchNextPage(section: Int) {
-        let model = viewModel.powerItemsModel[section]
-        guard model.items.isEmpty == false, let loadMore = model.loadMoreSection?.item, loadMore.hasNextItem == true else { return }
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.viewModel.fetchNextPaging()
-        }
     }
     
     private func eventForCustomCell() {

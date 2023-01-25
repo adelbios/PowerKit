@@ -25,8 +25,9 @@ class PowerLoadMoreCell: PowerCollectionCell {
 //MARK: - PowerCellDelegate
 extension PowerLoadMoreCell: PowerCellDelegate {
     
-    func configure(data: PowerLoadMoreModel.Item) {
-        data.hasNextItem ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()
+    func configure(data: PowerPaginationModel) {
+        let hasNextItem = data.current <= data.last ? true : false
+        hasNextItem ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()
     }
     
 }

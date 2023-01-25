@@ -10,36 +10,20 @@ import UIKit
 
 open class PowerItemModel {
     
-    public final let section: Int
-    open var loadMoreSection: PowerLoadMoreModel?
+    open var section: PowerItemSection
     open var emptyCell: PowerCells?
     open var layout: NSCollectionLayoutSection!
     open var items = [PowerCells]()
-    internal var itemSection: PowerItemSection?
     
     
     //MARK: - .init
-    public init(
-            section: Int, loadMoreSection: PowerLoadMoreModel? = nil,
-            emptyCell: PowerCells? = nil, itemSection: PowerItemSection? = nil,
-            layout: LayoutKind
-        ) {
-            
-            self.section = section
-            self.itemSection = itemSection
-            self.layout = layout.rawValue
-            self.loadMoreSection = loadMoreSection
-            self.emptyCell = emptyCell
-
-            if let itemSection {
-                self.layout.boundarySupplementaryItems.append(createItemSection(itemSection))
-            }
-
-            if let loadMoreSection {
-                self.layout.boundarySupplementaryItems.append(createLoadMoreSection(loadMoreSection))
-            }
+    public init(section: PowerItemSection, emptyCell: PowerCells? = nil, layout: LayoutKind) {
+        self.section = section
+        self.layout = layout.rawValue
+        self.emptyCell = emptyCell
+        self.createItemSections(section)
+    }
     
-        }
     
     //MARK: - Check For Layout Kind
     public enum LayoutKind: Hashable, Equatable {
@@ -51,19 +35,11 @@ open class PowerItemModel {
         var rawValue: NSCollectionLayoutSection {
             switch self {
             case .vertical:
-                let collectionViewLayout = CollectionViewLayout()
-                collectionViewLayout.itemSpacing = .init(top: 8, left: 0, bottom: 0, right: 0)
-                collectionViewLayout.groupSpacing = .init(top: 0, left: 20, bottom: 0, right: 20)
-                return collectionViewLayout.verticalDynamicLayout()
-                
+                return PowerItemModel.createVerticalLayout()
             case .horizontal:
-                let collectionViewLayout = CollectionViewLayout()
-                collectionViewLayout.itemSpacing = .init(top: 8, left: 0, bottom: 0, right: 0)
-                collectionViewLayout.groupSpacing = .init(top: 0, left: 0, bottom: 0, right: 5)
-                return collectionViewLayout.horizontalDynamicLayout()
+                return PowerItemModel.createHorizontalLayout()
             case .grid(let row):
-                let collectionViewLayout = CollectionViewLayout()
-                return collectionViewLayout.gridLayout(numberOfItemPerRows: row)
+                return PowerItemModel.createGridLayout(row: row)
             case .custom(let layout):
                 return layout
             }
@@ -71,8 +47,69 @@ open class PowerItemModel {
         
     }
     
-    internal func removeHeader(model: PowerItemModel?) {
-        model?.layout.boundarySupplementaryItems.removeAll { $0.elementKind == UICollectionView.elementKindSectionHeader }
+}
+
+//MARK: - Item Section
+internal extension PowerItemModel {
+    
+    private func createItemSections(_ model: PowerItemSection) {
+        if model.header != nil && model.footer != nil {
+            self.layout.boundarySupplementaryItems = [
+                createSection(model.header!, isHeader: true),
+                createSection(model.footer!, isHeader: false)
+            ]
+        }
+        
+        if model.header == nil && model.footer != nil {
+            self.layout.boundarySupplementaryItems = [createSection(model.footer!, isHeader: false)]
+        }
+        
+        if model.header != nil && model.footer == nil {
+            self.layout.boundarySupplementaryItems = [createSection(model.header!, isHeader: true)]
+        }
+    }
+    
+    func createSection(_ model: PowerItemSection.Section, isHeader: Bool) -> NSCollectionLayoutBoundarySupplementaryItem {
+        let headerKind = UICollectionView.elementKindSectionHeader
+        let footerKind = UICollectionView.elementKindSectionFooter
+        let sec = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: model.size,
+            elementKind: isHeader ? headerKind: footerKind,
+            alignment: isHeader ? .top : .bottom
+        )
+        sec.pinToVisibleBounds = model.pinToVisibleBounds
+        return sec
+    }
+    
+    func removeItemSection(model: PowerItemModel?, isHeader: Bool) {
+        let headerKind = UICollectionView.elementKindSectionHeader
+        let footerKind = UICollectionView.elementKindSectionFooter
+        let kind: String = isHeader ? headerKind : footerKind
+        model?.layout.boundarySupplementaryItems.removeAll { $0.elementKind == kind }
+    }
+    
+}
+
+//MARK: - Layout
+internal extension PowerItemModel {
+    
+    static func createVerticalLayout() -> NSCollectionLayoutSection {
+        let collectionViewLayout = CollectionViewLayout()
+        collectionViewLayout.itemSpacing = .init(top: 8, left: 0, bottom: 0, right: 0)
+        collectionViewLayout.groupSpacing = .init(top: 0, left: 20, bottom: 0, right: 20)
+        return collectionViewLayout.verticalDynamicLayout()
+    }
+    
+    static func createHorizontalLayout() -> NSCollectionLayoutSection {
+        let collectionViewLayout = CollectionViewLayout()
+        collectionViewLayout.itemSpacing = .init(top: 8, left: 0, bottom: 0, right: 0)
+        collectionViewLayout.groupSpacing = .init(top: 0, left: 0, bottom: 0, right: 5)
+        return collectionViewLayout.horizontalDynamicLayout()
+    }
+    
+    static func createGridLayout(row: Int) -> NSCollectionLayoutSection {
+        let collectionViewLayout = CollectionViewLayout()
+        return collectionViewLayout.gridLayout(numberOfItemPerRows: row)
     }
     
 }
@@ -82,38 +119,11 @@ extension PowerItemModel: Hashable {
     
     
     public static func == (lhs: PowerItemModel, rhs: PowerItemModel) -> Bool {
-        return lhs.section == rhs.section
+        return lhs.section.id == rhs.section.id
     }
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(self.section)
+        hasher.combine(self.section.id)
     }
     
 }
-
-//MARK: - Item Section
-internal extension PowerItemModel {
-    
-    func createItemSection(_ itemSection: PowerItemSection) -> NSCollectionLayoutBoundarySupplementaryItem {
-        let z = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: itemSection.size,
-            elementKind: UICollectionView.elementKindSectionHeader,
-            alignment: .top
-        )
-
-        z.pinToVisibleBounds = itemSection.pinToVisibleBounds
-        return z
-    }
-    
-    
-    private func createLoadMoreSection(_ section: PowerLoadMoreModel) -> NSCollectionLayoutBoundarySupplementaryItem {
-        return NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: .init(widthDimension: .fractionalWidth(0.9), heightDimension: .estimated(40)),
-            elementKind: UICollectionView.elementKindSectionFooter,
-            alignment: section.alignment
-        )
-    }
-    
-}
-
-

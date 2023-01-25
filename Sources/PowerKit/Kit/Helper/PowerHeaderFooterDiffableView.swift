@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by adel radwan on 27/11/2022.
 //
@@ -11,19 +11,14 @@ struct PowerHeaderFooterDiffableView {
     
     func build(
         settings: [PowerItemModel], status: PowerNetwork.RequestStatus, kind: String, collectionView: UICollectionView,
-        indexPath: IndexPath, useEmptyHeader: Bool, action: PowerActionListProxy
+        indexPath: IndexPath, action: PowerActionListProxy
     ) -> UICollectionReusableView? {
-        
         switch status {
         case .loading:
             return emptyCell(collectionView: collectionView, indexPath: indexPath, kind: kind)
         case .finished:
-            return configure(
-                settings: settings, collectionView: collectionView, indexPath: indexPath,
-                kind: kind, useEmptyHeader: useEmptyHeader, action: action
-            )
+            return configure(settings: settings, collectionView: collectionView, indexPath: indexPath, kind: kind, action: action)
         }
-        
     }
     
     
@@ -33,94 +28,46 @@ struct PowerHeaderFooterDiffableView {
 private extension PowerHeaderFooterDiffableView {
     
     
-    func configure(
-        settings: [PowerItemModel], collectionView: UICollectionView,
-        indexPath: IndexPath, kind: String, useEmptyHeader: Bool,
-        action: PowerActionListProxy) -> UICollectionReusableView?
-    {
-        if kind == UICollectionView.elementKindSectionHeader {
+    func configure(settings: [PowerItemModel], collectionView: UICollectionView, indexPath: IndexPath, kind: String,
+                   action: PowerActionListProxy) -> UICollectionReusableView? {
+        
+        let type = kind == UICollectionView.elementKindSectionHeader ? true : false
+        return reusableViews(
+            settings: settings, collectionView: collectionView, isHeader: type,
+            indexPath: indexPath, kind: kind, action: action
+        )
+        
+    }
+    
+    
+}
+
+
+//MARK: - Section
+private extension PowerHeaderFooterDiffableView {
+    
+    func reusableViews(
+        settings: [PowerItemModel], collectionView: UICollectionView, isHeader: Bool, indexPath: IndexPath, kind: String,
+        action: PowerActionListProxy) -> UICollectionReusableView? {
             
-            switch useEmptyHeader {
+            let empty = emptyCell(collectionView: collectionView, indexPath: indexPath, kind: kind)
+            let model = settings[indexPath.section]
+            let sectionType = isHeader ? model.section.header : model.section.footer
+            let isVisible = sectionType?.isVisible ?? true
+            switch isVisible {
             case true:
-                return emptyCell(collectionView: collectionView, indexPath: indexPath, kind: kind)
+                guard let section = sectionType, let reusableView = section.cell else { return empty }
+                let id = type(of: reusableView).cellId
+                let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath)
+                cell.semanticContentAttribute = .forceRightToLeft
+                reusableView.configure(cell: cell)
+                action.invoke(action: isHeader ? .headerVisible : .footerVisible, cell: cell, configurator: reusableView, indexPath: indexPath)
+                return cell
             case false:
-                return headerView(
-                    settings: settings,
-                    collectionView: collectionView,
-                    indexPath: indexPath,
-                    kind: kind,
-                    action: action
-                )
+                return empty
             }
-        } // End Header
-        
-        if kind == UICollectionView.elementKindSectionFooter {
-            return footerView(settings: settings, collectionView: collectionView, indexPath: indexPath, kind: kind)
+            
         }
-        
-        return emptyCell(collectionView: collectionView, indexPath: indexPath, kind: kind)
-    }
-    
-    
-}
-
-
-//MARK: - Header
-private extension PowerHeaderFooterDiffableView {
-    
-    func headerView(
-        settings: [PowerItemModel], collectionView: UICollectionView,
-        indexPath: IndexPath, kind: String, action: PowerActionListProxy) -> UICollectionReusableView?
-    {
-        let emptyCell = emptyCell(collectionView: collectionView, indexPath: indexPath, kind: kind)
-        let model = settings[indexPath.section]
-        guard let itemSection = model.itemSection else { return emptyCell }
-        guard let headerView = itemSection.cell else { return emptyCell }
-        
-        let cell = collectionView.dequeueReusableSupplementaryView(
-            ofKind: kind,
-            withReuseIdentifier: type(of: headerView).cellId,
-            for: indexPath
-        )
-        
-        cell.semanticContentAttribute = .forceRightToLeft
-        headerView.configure(cell: cell)
-        action.invoke(action: .headerVisible, cell: cell, configurator: headerView, indexPath: indexPath)
-        
-        return cell
-        
-    }
-    
-}
-
-//MARK: - Footer
-private extension PowerHeaderFooterDiffableView {
-    
-    func footerView(
-        settings: [PowerItemModel], collectionView: UICollectionView,
-        indexPath: IndexPath, kind: String) -> UICollectionReusableView?
-    {
-        
-        let emptyCell = emptyCell(collectionView: collectionView, indexPath: indexPath, kind: kind)
-        let model = settings[indexPath.section]
-        
-        guard let loadMoreSection = model.loadMoreSection else { return emptyCell }
-        guard let footerView = loadMoreSection.cell else { return emptyCell }
-        let cell = collectionView.dequeueReusableSupplementaryView(
-            ofKind: kind,
-            withReuseIdentifier: type(of: footerView).cellId,
-            for: indexPath
-        )
-        cell.semanticContentAttribute = .forceRightToLeft
-        footerView.configure(cell: cell)
-        
-        return cell
-    }
-    
-}
-
-//MARK: - EmptyCell
-private extension PowerHeaderFooterDiffableView {
     
     func emptyCell(collectionView: UICollectionView, indexPath: IndexPath, kind: String) -> UICollectionReusableView {
         let cell = collectionView.dequeueReusableSupplementaryView(
@@ -132,5 +79,6 @@ private extension PowerHeaderFooterDiffableView {
         return cell
     }
     
-    
 }
+
+

@@ -6,13 +6,18 @@
 //
 
 import Foundation
+import UIKit
 
 internal class CreateViewModel: NSObject {
     
-    func addNewTo(_ settings: [PowerItemModel], header: PowerCells? = nil, newItems: [PowerCells], section: Int,
-                  at: Int? = nil, removeOld: Bool) {
+    var deletedViewModel: DeleteViewModel!
+    
+    func addNewTo(_ settings: [PowerItemModel], header: PowerUpdateItemSection?, footer: PowerUpdateItemSection?, newItems: [PowerCells], section: Int, at: Int? = nil, removeOld: Bool) {
         guard settings.isEmpty == false else { initFatelError(); return }
-        addNewItems(settings: settings, items: newItems, headerItem: header, forSection: section, at: at, removeOld: removeOld)
+        addNewItems(
+            settings: settings, items: newItems, headerItem: header, footerItem: footer,
+            forSection: section, at: at, removeOld: removeOld
+        )
     }
     
 }
@@ -20,11 +25,9 @@ internal class CreateViewModel: NSObject {
 //MARK: - Helper
 extension CreateViewModel {
     
-    private func addNewItems(settings: [PowerItemModel], items: [PowerCells], headerItem: PowerCells?,
-                             forSection: Int, at: Int? = nil, removeOld: Bool) {
-        guard let model = settings.filter({ $0.section == forSection }).first else { sectionFatelError(); return }
-        createHeaderUsing(setting: model, header: headerItem)
-        
+    private func addNewItems(settings: [PowerItemModel], items: [PowerCells], headerItem: PowerUpdateItemSection?,footerItem: PowerUpdateItemSection?, forSection: Int, at: Int? = nil, removeOld: Bool) {
+        guard let model = settings.filter({ $0.section.id == forSection }).first else { sectionFatelError(); return }
+        createItemSectionUsing(setting: model, headerCell: headerItem, footerCell: footerItem)
         switch removeOld {
         case true:
             model.items = items
@@ -54,18 +57,55 @@ extension CreateViewModel {
         case true:
             powerItemModel.items.insert(newItem, at: at!)
         case false:
-            powerItemModel.items.append(newItem)
+            if let index = deletedViewModel.removedItemPositions {
+                powerItemModel.items.insert(newItem, at: index)
+                self.deletedViewModel.deleteValueFromRemovedItemPosition()
+            }else {
+                powerItemModel.items.append(newItem)
+            }
+            
         }
     }
     
-    private func createHeaderUsing(setting: PowerItemModel, header: PowerCells?) {
-        guard let itemSection = setting.itemSection else { return }
-        itemSection.cell = header
-        itemSection.sectionIndex = setting.section
-        let newSection = setting.createItemSection(itemSection)
-        guard setting.layout.boundarySupplementaryItems.contains(newSection) == false else { return }
+    private func createItemSectionUsing(setting: PowerItemModel, headerCell: PowerUpdateItemSection?, footerCell: PowerUpdateItemSection?) {
+        createHeader(model: headerCell, setting: setting)
+        createFooter(model: footerCell, setting: setting)
+    }
+    
+    
+}
+
+//MARK: - Item Section
+extension CreateViewModel {
+    
+    private func createHeader(model: PowerUpdateItemSection?, setting: PowerItemModel) {
+        guard let header = setting.section.header, let model, let hederCell = model.cell else { return }
+        header.cell = hederCell
+        header.isVisible = model.isVisible
+        guard let size = model.size else { return }
+        header.size = size
+        updateItemSectinLayoutSize(isHeader: true, setting: setting, model: header)
+        
+    }
+    
+    private func createFooter(model: PowerUpdateItemSection?, setting: PowerItemModel) {
+        guard let footer = setting.section.footer, let model, let footerCell = model.cell else { return }
+        footer.cell = footerCell
+        footer.isVisible = model.isVisible
+        guard let size = model.size else { return }
+        footer.size = size
+        updateItemSectinLayoutSize(isHeader: false, setting: setting, model: footer)
+        
+    }
+    
+    func updateItemSectinLayoutSize(isHeader: Bool, setting: PowerItemModel, model: PowerItemSection.Section) {
+        let newSection = setting.createSection(
+            .init(size: model.size, pinToVisibleBounds: model.pinToVisibleBounds, isVisible: model.isVisible), isHeader: isHeader
+        )
+        setting.removeItemSection(model: setting, isHeader: isHeader)
         setting.layout.boundarySupplementaryItems.append(newSection)
     }
+    
     
 }
 
@@ -85,3 +125,4 @@ private extension CreateViewModel {
     }
     
 }
+

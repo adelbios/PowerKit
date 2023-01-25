@@ -6,24 +6,23 @@
 //
 
 import Foundation
+import UIKit
 
 
 
 internal class HelperViewModel: NSObject {
     
-    private let createViewModel = CreateViewModel()
-    @Published private(set) var reloadUI: Bool?
     @Published private(set) var didUpdateHeaderEventFire: Int?
+    private let createViewModel = CreateViewModel()
     
-    
-    func update(settings: [PowerItemModel], newHeader: PowerCells?, newItem: PowerUpdatedModel?, section: Int) {
+    func update(settings: [PowerItemModel], newHeader: PowerCells?, newFooter: PowerCells?, newItem: PowerUpdatedModel?, section: Int) {
         guard settings.isEmpty == false else { initFatelError(); return }
-        guard let model = settings.first(where: { $0.section == section }) else { sectionFatelError(); return }
+        guard let model = settings.first(where: { $0.section.id == section }) else { sectionFatelError(); return }
         
-        if let newHeader { updateHeader(newHeader, settings: model) }
+        if let newHeader { updateSection(newHeader, settings: model, isHeader: true) }
+        if let newFooter { updateSection(newFooter, settings: model, isHeader: true)  }
         if let newItem { updateItem(updatedModel: newItem, settings: model) }
-       
-        reloadUI = true
+
     }
     
     func setItemHidden(_ value: Bool, settings: [PowerItemModel], section: Int) -> (value: Bool, section: Int) {
@@ -33,22 +32,20 @@ internal class HelperViewModel: NSObject {
         return (value, section)
     }
     
-    
-    func search(settings: [PowerItemModel], headerData: PowerCells?, item: [PowerCells], section: Int) {
-        guard settings.isEmpty == false else { initFatelError(); return }
-        guard let model = settings.first(where: { $0.section == section }) else { sectionFatelError(); return }
-        model.items.removeAll()
-        updateHeader(headerData, settings: model)
-        item.forEach {
-            createViewModel.appendOrInsertNewItem(at: nil, powerItemModel: model, newItem: $0, forSection: section, removeOld: false)
-        }
-        self.reloadUI = true
-    }
-    
     func getPowerItemModel(settings: [PowerItemModel], section: Int) -> PowerItemModel? {
         guard settings.isEmpty == false else { initFatelError(); return nil }
-        guard let model = settings.first(where: { $0.section == section }) else { sectionFatelError(); return nil }
+        guard let model = settings.first(where: { $0.section.id == section }) else { sectionFatelError(); return nil }
         return model
+    }
+    
+    func seItemtSection(isHeader: Bool, visible: Bool, newSectionSize: NSCollectionLayoutSize?, settings: [PowerItemModel], section: Int) {
+        guard settings.isEmpty == false else { initFatelError(); return }
+        guard let model = settings.first(where: { $0.section.id == section }) else { sectionFatelError(); return }
+        guard let itemSection = isHeader ? model.section.header : model.section.footer else { return }
+        itemSection.isVisible = visible
+        guard let newSectionSize else { return }
+        itemSection.size = newSectionSize
+        createViewModel.updateItemSectinLayoutSize(isHeader: isHeader, setting: model, model: itemSection)
     }
     
 }
@@ -56,11 +53,18 @@ internal class HelperViewModel: NSObject {
 //MARK: - Helper functions
 private extension HelperViewModel {
     
-    func updateHeader(_ data: PowerCells?, settings: PowerItemModel) {
-        guard let itemSection = settings.itemSection else { return }
+    
+    func updateSection(_ data: PowerCells?, settings: PowerItemModel, isHeader: Bool) {
         guard let data = data else { return }
-        itemSection.cell = data
-        self.didUpdateHeaderEventFire = settings.section
+        if let header = settings.section.header {
+            header.cell = data
+        }
+        
+        if let footer = settings.section.footer {
+            footer.cell = data
+        }
+        
+        didUpdateHeaderEventFire = settings.section.id
     }
     
     func updateItem(updatedModel: PowerUpdatedModel, settings: PowerItemModel) {
@@ -88,3 +92,4 @@ private extension HelperViewModel {
     }
     
 }
+

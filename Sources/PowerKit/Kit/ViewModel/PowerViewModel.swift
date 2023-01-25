@@ -11,9 +11,10 @@ import Combine
 open class PowerViewModel<T: Codable>: NSObject {
     
     //MARK: - Public Variables
-    public enum RequestType { case get, post }
-    open private(set) var powerItemsModel = [PowerItemModel]()
+    open private(set) var isFetchMoreData: Bool = false
+    open private(set) var paginationModel: PowerPaginationModel?
     open var subscription = Set<AnyCancellable>()
+    open private(set) var powerItemsModel = [PowerItemModel]()
     open weak var viewController: UIViewController?
     open weak var collectionView: UICollectionView?
     open var action = PowerActionListProxy()
@@ -24,18 +25,22 @@ open class PowerViewModel<T: Codable>: NSObject {
         set { spaceBetweenEachSections = newValue }
     }
     
+    open var useKeyDecodingStrategy: Bool {
+        return false
+    }
+    
     //MARK: - private Variables
-    private(set) var isFetchMoreData: Bool = false
-    private(set) var registeredCellsModel = [RegisteredCellsModel]()
-    private(set) var paginationSection: Int?
-    private var spaceBetweenEachSections: CGFloat = 0
     private let createViewModel = CreateViewModel()
     private let deleteViewModel = DeleteViewModel()
     private let helperViewModel = HelperViewModel()
-    private let paginationViewModel = PaginationViewModel()
+    private(set) var registeredCellsModel = [RegisteredCellsModel]()
+    private(set) var paginationSection: Int?
+    private(set) var isStaticList: Bool = false
+    private var spaceBetweenEachSections: CGFloat = 0
+    private var requestType: RequestType = .get
+    private enum RequestType { case get, post }
     
     //MARK: - Combine Variables
-    open private(set) var requestType: RequestType = .get
     @Published open private(set) var didRequestCompleteEvent: Bool?
     @Published open private(set) var isEmptyDataEventFire: Bool?
     @Published private(set) var isReloadEventFire: Bool?
@@ -64,7 +69,6 @@ open class PowerViewModel<T: Codable>: NSObject {
         observeDeleteItemEvent()
         observeHeaderUpdatedEvent()
         observeReloadUIForHeaderEvent()
-        observeReloadUIEvent()
     }
     
     
@@ -77,20 +81,24 @@ open class PowerViewModel<T: Codable>: NSObject {
     
     open func didFetchModels(_ model: T) {
     }
+    
     open func didFetchModels(_ model: T, data: Data) {
     }
     
     open func makeHTTPRequest(){
         self.requestType = .get
         self.isFetchMoreData = false
+        self.isStaticList = false
     }
     
     open func postRequestAt(_ view: UIView) {
         self.requestType = .post
         self.isFetchMoreData = false
+        self.isStaticList = false
     }
     
     open func fetchStaticData(){
+        self.isStaticList = true
         self.network.ignoreNetworkRequest()
     }
     
@@ -108,6 +116,13 @@ open class PowerViewModel<T: Codable>: NSObject {
     
     internal func setItems(isEmpty: Bool) {
         self.isEmptyDataEventFire = isEmpty
+    }
+    
+    open func setPagination(model: PowerPaginationModel, section: Int) -> PowerPaginationModel {
+        let painationModel = PowerPaginationModel(current: model.current + 1, last: model.last)
+        self.paginationSection = section
+        self.paginationModel = painationModel
+        return painationModel
     }
     
 }
@@ -143,9 +158,13 @@ public extension PowerViewModel {
     ///   - forSection: To add new item at specific section
     ///   - at: Used for append or insert, so when ignoring this we append new item
     ///   - removeOld: Used for remove previous item to avoid dubplication sometimes, defualt value is false
-    func addNew(headerItem: PowerCells? = nil, item:  PowerCells, forSection: Int, at: Int? = nil, removeOld: Bool = false) {
+    func addNew(
+        headerItem: PowerUpdateItemSection? = nil, footerItem: PowerUpdateItemSection? = nil,
+        item:  PowerCells, forSection: Int, at: Int? = nil, removeOld: Bool = false
+    ) {
+        createViewModel.deletedViewModel = deleteViewModel
         createViewModel.addNewTo(
-            powerItemsModel, header: headerItem, newItems: [item],
+            powerItemsModel, header: headerItem, footer: footerItem, newItems: [item],
             section: forSection, at: at, removeOld: removeOld
         )
         self.isReloadEventFire = true
@@ -158,11 +177,16 @@ public extension PowerViewModel {
     ///   - forSection: To add new item at specific section, it's work only when new items has same type of PowerCells
     ///   - at: Used for append or insert, so when ignoring this we append new item
     ///   - removeOld: Used for remove previous item to avoid dubplication sometimes, defualt value is false
-    func addNew(headerItem: PowerCells? = nil, items:  [PowerCells], forSection: Int, at: Int? = nil, removeOld: Bool = false) {
+    func addNew(
+        headerItem: PowerUpdateItemSection? = nil, footerItem: PowerUpdateItemSection? = nil,
+        items: [PowerCells], forSection: Int, at: Int? = nil, removeOld: Bool = false
+    ) {
+        createViewModel.deletedViewModel = deleteViewModel
         createViewModel.addNewTo(
-            powerItemsModel, header: headerItem, newItems: items,
+            powerItemsModel, header: headerItem, footer: footerItem, newItems: items,
             section: forSection, at: at, removeOld: removeOld
         )
+        
         self.isReloadEventFire = true
     }
     
@@ -251,23 +275,25 @@ public extension PowerViewModel {
 //MARK: - HelperViewModel
 public extension PowerViewModel {
     
-    /// Update Header Section Item for speisifc section
+    /// Update PowerCell Item with new hashable value
     /// - Parameters:
-    ///   - itemSection: new sectionHeader to be updating
-    ///   - forSection: To update item in specific section
-    func update(header: PowerCells?, item: PowerUpdatedModel?, section: Int) {
+    ///   - header: Update Header, set value to be null to avoid updating
+    ///   - footer: Update Footer, set value to be null to avoid updating
+    ///   - item: Update item in spesific section, set value to be null to avoid updating
+    ///   - section: update values for spesific section
+    func update(header: PowerCells?, footer: PowerCells?, item: PowerUpdatedModel?, section: Int) {
         helperViewModel.update(
-            settings: powerItemsModel,
-            newHeader: header,
-            newItem: item,
-            section: section
+            settings: powerItemsModel, newHeader: header, newFooter: footer,
+            newItem: item, section: section
         )
+        
+        self.isReloadEventFire = true
     }
     
-    /// Hide All Items from section, also we can use this func to collaps section items
+    /// collapse All Items from section, also we can use this func to collaps section items
     /// - Parameters:
     ///   - section: Section used to hide all element from it
-    func hide(section: Int) {
+    func collapseItem(section: Int) {
         let item = helperViewModel.setItemHidden(true, settings: powerItemsModel, section: section)
         self.isItemExpanding = (item.value, item.section)
     }
@@ -275,18 +301,9 @@ public extension PowerViewModel {
     /// Show All Items again for section, also we can use this func to expand section items
     /// - Parameters:
     ///   - section: Section used to hide all element from it
-    func show(section: Int) {
+    func expandItem(section: Int) {
         let item = helperViewModel.setItemHidden(false, settings: powerItemsModel, section: section)
         self.isItemExpanding = (item.value, item.section)
-    }
-    
-    /// search for items
-    /// - Parameters:
-    ///   - newItems: to replace old item with new item
-    ///   - section: To update item in specific section
-    ///   - header: update header data if you needed
-    func search(header: PowerCells? = nil, newItems: [PowerCells], section: Int) {
-        helperViewModel.search(settings: powerItemsModel, headerData: header, item: newItems, section: section)
     }
     
     /// Get PowerItemModel for spesific sections
@@ -296,6 +313,35 @@ public extension PowerViewModel {
         return helperViewModel.getPowerItemModel(settings: powerItemsModel, section: section)
     }
     
+    /// Show Or Hide Header you can use this func also to change size just pass visible value to be true
+    /// - Parameters:
+    ///   - visible: To Present or Hide
+    ///   - newSize: Set new Footer size
+    ///   - section: Pass section to implement this func in particular indexPath section
+    func setHeaderSection(visible: Bool, newSize: NSCollectionLayoutSize?, section: Int) {
+        helperViewModel.seItemtSection(
+            isHeader: true, visible: visible, newSectionSize: newSize,
+            settings: powerItemsModel, section: section
+        )
+        self.sectionChangedIdentifier = section
+    }
+    
+    
+    /// Show Or Hide Footer you can use this func also to change size just pass visible value to be true
+    /// - Parameters:
+    ///   - visible: To Present or Hide
+    ///   - newSize: Set new Footer size
+    ///   - section: Pass section to implement this func in particular indexPath section
+    func setFooterSection(visible: Bool, newSize: NSCollectionLayoutSize?, section: Int) {
+        helperViewModel.seItemtSection(
+            isHeader: false, visible: visible, newSectionSize: newSize,
+            settings: powerItemsModel, section: section
+        )
+        
+        self.sectionChangedIdentifier = section
+    }
+    
+    
     private func observeReloadUIForHeaderEvent() {
         helperViewModel.$didUpdateHeaderEventFire
             .compactMap { $0 }
@@ -304,47 +350,10 @@ public extension PowerViewModel {
                 self.sectionChangedIdentifier = $0
             }.store(in: &subscription)
     }
-    
-    private func observeReloadUIEvent() {
-        helperViewModel.$reloadUI
-            .compactMap { $0 }
-            .filter { $0 == true }
-            .sink { [weak self] _ in
-                guard let self = self else { return }
-                self.isReloadEventFire = true
-            }.store(in: &subscription)
-    }
+
     
 }
 
-//MARK: - Pagination ViewModel
-public extension PowerViewModel {
-    
-    
-    /// Get model that used in pagination
-    /// - Parameter section: To set correct section
-    /// - Returns: PowerLoadMoreModel.Item with nil value
-    func getLoadMoreModel(section: Int) -> PowerLoadMoreModel.Item? {
-        paginationSection = section
-        return paginationViewModel.get(settings: powerItemsModel, section: section)
-    }
-    
-    /// Update Load more model, use this function in web serves response, NOTE: when you call this function and web service does not have (current page & last page) values avoid to pass current page, set last page value to be estemated value and check for last page if have next url or not
-    ///  - Example: self.updateLoadMore(section: 0, lastPage: model.nextURL == nil ? nil : 50000)
-    /// - Parameters:
-    ///   - section: update it for specific section
-    ///   - currentPage: new current page
-    ///   - lastPage: new last Page
-    func updateLoadMore(section: Int, model: PowerLoadMoreModel.Item) {
-        paginationSection = section
-        paginationViewModel.set(
-            settings: powerItemsModel,
-            section: section,
-            loadMoreModel: model
-        )
-    }
-    
-}
 
 //MARK: - CollectionView Layout
 internal extension PowerViewModel {
@@ -356,8 +365,12 @@ internal extension PowerViewModel {
             }
             let model = self?.powerItemsModel[section]
             
-            if self?.network.status == .finished && model?.itemSection?.cell == nil {
-                model?.removeHeader(model: model)
+            if self?.network.status == .finished && model?.section.header?.cell == nil {
+                model?.removeItemSection(model: model, isHeader: true)
+            }
+            
+            if self?.network.status == .finished && model?.section.footer?.cell == nil {
+                model?.removeItemSection(model: model, isHeader: false)
             }
             
             return model?.layout
@@ -366,7 +379,7 @@ internal extension PowerViewModel {
         let config = UICollectionViewCompositionalLayoutConfiguration()
         config.interSectionSpacing = self.spaceBetweenEachSections
         layout.configuration = config
-        
+    
         return layout
     }
     
@@ -381,7 +394,7 @@ private extension PowerViewModel {
             .compactMap { $0 } // to remove nil value & first lunsh when data is Empty
             .sink { [weak self] data in
                 guard let self = self else { return }
-                self.json.implement(useKeyDecodingStrategy: false, type: T.self, data: data){
+                self.json.implement(useKeyDecodingStrategy: self.useKeyDecodingStrategy, type: T.self, data: data){
                     self.didFetchModels($0)
                     self.didFetchModels($0, data: data)
                     self.didRequestCompleteEvent = true
@@ -399,8 +412,9 @@ private extension PowerViewModel {
                 self.onInternetErrorEventFire(title: model.description, message: model.message)
             }.store(in: &subscription)
     }
-    
+
     
 }
+
 
 

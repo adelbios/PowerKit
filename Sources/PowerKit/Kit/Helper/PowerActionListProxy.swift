@@ -19,6 +19,7 @@ public enum PowerCellsAction: Hashable {
     case didSelect
     case didDeSelect
     case headerVisible
+    case footerVisible
     case custom(String)
     
     public func hash(into hasher: inout Hasher) {
@@ -29,6 +30,8 @@ public enum PowerCellsAction: Hashable {
             hasher.combine(2)
         case .headerVisible:
             hasher.combine(3)
+        case .footerVisible:
+            hasher.combine(4)
         case .custom(let custom):
             hasher.combine(custom)
         }

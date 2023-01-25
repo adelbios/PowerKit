@@ -46,9 +46,18 @@ extension PowerDiffableDataSource: SkeletonCollectionViewDataSource {
     }
     
     func collectionSkeletonView(_ skeletonView: UICollectionView, supplementaryViewIdentifierOfKind: String, at indexPath: IndexPath) -> ReusableCellIdentifier? {
-        guard let header = skeletoneCells[indexPath.section].header else { return nil }
-        guard header.isSkeletonEnable == true else { return nil }
-        return header.cell.name
+        let section = skeletoneCells[indexPath.section]
+        switch supplementaryViewIdentifierOfKind {
+        case UICollectionView.elementKindSectionHeader:
+            guard let header = section.header, header.isSkeletonEnable == true else { return nil }
+            return header.cell.name
+        case UICollectionView.elementKindSectionFooter:
+            guard let footer = section.footer, footer.isSkeletonEnable == true else { return nil }
+            return footer.cell.name
+        default:
+            return nil
+        }
+        
     }
 
 }
@@ -59,23 +68,27 @@ private extension PowerDiffableDataSource {
     
     func registerAllCellsUsing(_ collectionView: UICollectionView) {
         collectionView.register(PowerEmptyCell.self)
-        collectionView.register(PowerLoadMoreCell.self, kind: .footer)
-        addEmptyHeader(collectionView: collectionView)
         registeredCells.forEach { setupCellUsing($0, collectionView: collectionView) }
+        addEmptyHeader(collectionView: collectionView)
     }
     
     func setupCellUsing(_ model: RegisteredCellsModel, collectionView: UICollectionView) {
         collectionView.register(model.cell, fromNib: model.fromNib)
-        guard let header = model.header?.cell else { return }
-        collectionView.register(header, kind: .header, fromNib: model.fromNib)
-        collectionView.register(header, kind: .footer, fromNib: model.fromNib)
+        
+        if let header = model.header?.cell {
+            collectionView.register(header, kind: .header, fromNib: model.fromNib)
+        }
+        
+        if let footer = model.footer?.cell {
+            collectionView.register(footer, kind: .footer, fromNib: model.fromNib)
+        }
+        
     }
     
     func addEmptyHeader(collectionView: UICollectionView) {
         //This help me when loading content using skeleton View
         collectionView.register(UICollectionViewCell.self, kind: .header)
         collectionView.register(UICollectionViewCell.self, kind: .footer)
-        collectionView.register(PowerLoadMoreCell.self, kind: .footer, fromNib: false)
     }
     
 }

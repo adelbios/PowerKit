@@ -88,6 +88,7 @@ private extension PowerNetwork {
                 self.didResponseSuccess(response, target: target)
             }
         }
+        
     }
     
     func didResponseSuccess(_ response: Response, target: TargetType) {
