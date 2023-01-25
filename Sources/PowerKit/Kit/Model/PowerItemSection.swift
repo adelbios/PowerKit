@@ -30,7 +30,7 @@ public struct PowerItemSection: Hashable {
         internal var cell: PowerCells!
         
         
-        init(size: NSCollectionLayoutSize, pinToVisibleBounds: Bool = false, isVisible: Bool = true) {
+        public init(size: NSCollectionLayoutSize, pinToVisibleBounds: Bool = false, isVisible: Bool = true) {
             self.size = size
             self.pinToVisibleBounds = pinToVisibleBounds
             self.isVisible = isVisible
@@ -55,7 +55,7 @@ public struct PowerUpdateItemSection {
     public let isVisible: Bool
     public let size: NSCollectionLayoutSize?
     
-    init(cell: PowerCells? = nil, isVisible: Bool = true, size: NSCollectionLayoutSize? = nil) {
+    public init(cell: PowerCells? = nil, isVisible: Bool = true, size: NSCollectionLayoutSize? = nil) {
         self.cell = cell
         self.isVisible = isVisible
         self.size = size
