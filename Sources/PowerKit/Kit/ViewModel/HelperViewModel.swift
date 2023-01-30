@@ -56,11 +56,12 @@ private extension HelperViewModel {
     
     func updateSection(_ data: PowerCells?, settings: PowerItemModel, isHeader: Bool) {
         guard let data = data else { return }
-        if let header = settings.section.header {
+        switch isHeader {
+        case true:
+            guard let header = settings.section.header else { return }
             header.cell = data
-        }
-        
-        if let footer = settings.section.footer {
+        case false:
+            guard let footer = settings.section.footer else { return }
             footer.cell = data
         }
         
