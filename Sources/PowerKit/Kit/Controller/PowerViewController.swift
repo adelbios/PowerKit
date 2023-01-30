@@ -60,6 +60,14 @@ open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, 
     }
     
     //MARK: - Collection View Protocol
+    open func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+    }
+    
+    open func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
+    }
+    
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
     }
     
@@ -70,6 +78,7 @@ open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, 
     public func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         didDeSelect(indexPath: indexPath)
     }
+    
     
     //MARK: - ScrollView
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
