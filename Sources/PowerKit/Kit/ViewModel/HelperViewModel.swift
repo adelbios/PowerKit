@@ -20,7 +20,7 @@ internal class HelperViewModel: NSObject {
         guard let model = settings.first(where: { $0.section.id == section }) else { sectionFatelError(); return }
         
         if let newHeader { updateSection(newHeader, settings: model, isHeader: true) }
-        if let newFooter { updateSection(newFooter, settings: model, isHeader: true)  }
+        if let newFooter { updateSection(newFooter, settings: model, isHeader: false)  }
         if let newItem { updateItem(updatedModel: newItem, settings: model) }
 
     }
