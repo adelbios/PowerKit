@@ -129,6 +129,10 @@ open class PowerViewModel<T: Codable>: NSObject {
         return painationModel
     }
     
+    open func contextMenuConfiguration(indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        
+    }
+    
 }
 
 //MARK: - Settings

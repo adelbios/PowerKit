@@ -65,7 +65,10 @@ open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, 
     }
     
     open func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        
+    }
+    
+    open func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        return viewModel.contextMenuConfiguration(indexPaths: indexPaths, point: point)
     }
     
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
