@@ -130,7 +130,7 @@ open class PowerViewModel<T: Codable>: NSObject {
     }
     
     open func contextMenuConfiguration(indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
-        
+        return nil
     }
     
 }
