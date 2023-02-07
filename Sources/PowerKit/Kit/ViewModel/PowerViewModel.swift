@@ -73,6 +73,7 @@ open class PowerViewModel<T: Codable>: NSObject {
         observeDeleteItemEvent()
         observeHeaderUpdatedEvent()
         observeReloadUIForHeaderEvent()
+        buildSettings()
     }
     
     
@@ -87,6 +88,10 @@ open class PowerViewModel<T: Codable>: NSObject {
     }
     
     open func didFetchModels(_ model: T, data: Data) {
+    }
+    
+    open func buildSettings() {
+        
     }
     
     open func makeHTTPRequest(){
