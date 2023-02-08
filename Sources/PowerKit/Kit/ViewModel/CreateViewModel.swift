@@ -57,12 +57,12 @@ extension CreateViewModel {
         case true:
             powerItemModel.items.insert(newItem, at: at!)
         case false:
-            if let index = deletedViewModel.removedItemPositions {
-                powerItemModel.items.insert(newItem, at: index)
-                self.deletedViewModel.deleteValueFromRemovedItemPosition()
-            }else {
+//            if let index = deletedViewModel.removedItemPositions {
+//                powerItemModel.items.insert(newItem, at: index)
+//                self.deletedViewModel.deleteValueFromRemovedItemPosition()
+//            }else {
                 powerItemModel.items.append(newItem)
-            }
+//            }
             
         }
     }
