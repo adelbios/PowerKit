@@ -186,7 +186,7 @@ private extension PowerEmptyView {
         holderView.addSubview(stackView)
         stackView.snp.makeConstraints { $0.edges.equalToSuperview() }
         
-        setHeightConstantFor([animationView, imageView], value: 170)
+        setHeightConstantFor([animationView, imageView], value: 220)
         
         actionButton.snp.updateConstraints {
             $0.width.equalTo(holderView)
