@@ -221,7 +221,7 @@ extension PowerEmptyView {
         self.isActionButtonClicked = true
     }
     
-    func change(position: LayoutPosition) {
+    public func change(position: LayoutPosition) {
         switch position {
         case .middle:
             remakeHolderViewConstraintUsing { $0.centerY.equalToSuperview().offset(-40) }
