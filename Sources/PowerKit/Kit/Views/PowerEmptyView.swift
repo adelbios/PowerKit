@@ -221,7 +221,7 @@ extension PowerEmptyView {
         self.isActionButtonClicked = true
     }
     
-    public func change(position: LayoutPosition) {
+    public func change(position: LayoutPosition, animated: Bool = false) {
         switch position {
         case .middle:
             remakeHolderViewConstraintUsing { $0.centerY.equalToSuperview().offset(-40) }
@@ -230,7 +230,12 @@ extension PowerEmptyView {
         case .bottom:
             remakeHolderViewConstraintUsing { $0.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).inset(8) }
         }
-        self.layoutIfNeeded()
+        if animated == false {
+            self.layoutIfNeeded()
+        } else {
+            UIViewPropertyAnimator(duration: 0.5, curve: .linear) { self.layoutIfNeeded() }.startAnimation()
+        }
+        
     }
     
     func setAnimationImageView(_ fileName: String) {
