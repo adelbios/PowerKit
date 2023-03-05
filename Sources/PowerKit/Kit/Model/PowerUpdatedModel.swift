@@ -7,12 +7,12 @@
 
 import Foundation
 
-public class PowerUpdatedModel {
+open class PowerUpdatedModel {
         
-    var newItem: PowerCells
-    var oldItem: PowerCells
+    open var newItem: PowerCells
+    open var oldItem: PowerCells
     
-    init(oldItem: PowerCells, newItem: PowerCells) {
+    public init(oldItem: PowerCells, newItem: PowerCells) {
         self.newItem = newItem
         self.oldItem = oldItem
     }
