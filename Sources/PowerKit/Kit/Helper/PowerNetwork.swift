@@ -30,6 +30,8 @@ open class PowerNetwork: NSObject {
     
     open private(set) var fileSize: String = ""
     
+    private var previousRequest: Moya.Cancellable?
+    
     private lazy var provider: MoyaProvider<MultiTarget> = {
         let provider = MoyaProvider<MultiTarget>(plugins: isLoadingInBackground ? [PowerBackgroundPlugin()] : [])
         return provider
@@ -67,13 +69,16 @@ open class PowerNetwork: NSObject {
         self.status = .finished
     }
     
+    open func cancleRequest() {
+        previousRequest?.cancel()
+    }
 }
 
 //MARK: - Request & Response
 private extension PowerNetwork {
     
     func completeRequest(_ target: TargetType) {
-        provider.request(.target(target), callbackQueue: DispatchQueue.main) { [weak self] progress in
+        previousRequest = provider.request(.target(target), callbackQueue: DispatchQueue.main) { [weak self] progress in
             guard let self = self else { return }
             guard let progress = progress.progressObject else { return }
             self.requestProgress = progress
@@ -88,6 +93,8 @@ private extension PowerNetwork {
                 self.didResponseSuccess(response, target: target)
             }
         }
+        
+        
         
     }
     
