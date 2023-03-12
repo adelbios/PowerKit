@@ -116,6 +116,7 @@ open class PowerViewModel<T: Codable>: NSObject {
     
     //MARK: - Paging request
     open func fetchNextPaging(){
+        self.requestType = .get
         self.isFetchMoreData = true
     }
     
