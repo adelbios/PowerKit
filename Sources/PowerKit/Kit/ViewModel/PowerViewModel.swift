@@ -118,6 +118,7 @@ open class PowerViewModel<T: Codable>: NSObject {
     open func fetchNextPaging(){
         self.requestType = .get
         self.isFetchMoreData = true
+        
     }
     
     open func updateUI() {
