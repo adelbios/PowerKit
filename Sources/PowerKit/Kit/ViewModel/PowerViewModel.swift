@@ -422,7 +422,8 @@ private extension PowerViewModel {
         network.$networkErrorModel
             .receive(on: DispatchQueue.main)
             .compactMap{ $0 }
-            .sink { model in
+            .sink { [weak self] model in
+                guard let self = self else { return }
                 guard self.requestType == .post else { return }
                 self.onInternetErrorEventFire(title: model.description, message: model.message)
             }.store(in: &subscription)
