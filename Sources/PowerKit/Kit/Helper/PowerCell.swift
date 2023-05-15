@@ -59,7 +59,7 @@ private protocol PowerDelegate {
 }
 
 
-open class PowerCells: PowerDelegate, Hashable, Equatable   {
+open class PowerCells: PowerDelegate, Hashable, Equatable{
     
     open var item: AnyHashable!
     open var otherItems: AnyHashable?

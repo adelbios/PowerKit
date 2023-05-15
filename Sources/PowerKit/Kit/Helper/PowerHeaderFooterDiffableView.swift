@@ -10,7 +10,7 @@ import UIKit
 struct PowerHeaderFooterDiffableView {
     
     func build(
-        settings: [PowerItemModel], status: PowerNetwork.RequestStatus, kind: String, collectionView: UICollectionView,
+        settings: [PowerItemViewModel], status: PowerNetwork.RequestStatus, kind: String, collectionView: UICollectionView,
         indexPath: IndexPath, action: PowerActionListProxy
     ) -> UICollectionReusableView? {
         switch status {
@@ -28,15 +28,48 @@ struct PowerHeaderFooterDiffableView {
 private extension PowerHeaderFooterDiffableView {
     
     
-    func configure(settings: [PowerItemModel], collectionView: UICollectionView, indexPath: IndexPath, kind: String,
+    func configure(settings: [PowerItemViewModel], collectionView: UICollectionView, indexPath: IndexPath, kind: String,
                    action: PowerActionListProxy) -> UICollectionReusableView? {
         
-        let type = kind == UICollectionView.elementKindSectionHeader ? true : false
-        return reusableViews(
-            settings: settings, collectionView: collectionView, isHeader: type,
-            indexPath: indexPath, kind: kind, action: action
-        )
         
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            return buildHeader(settings: settings, collectionView: collectionView, indexPath: indexPath, action: action)
+        case UICollectionView.elementKindSectionFooter:
+            return buildPagination(settings: settings, collectionView: collectionView, indexPath: indexPath)
+        default:
+            return emptyCell(collectionView: collectionView, indexPath: indexPath, kind: kind)
+        }
+        
+    }
+    
+    
+    func buildHeader(settings: [PowerItemViewModel], collectionView: UICollectionView, indexPath: IndexPath, action: PowerActionListProxy) -> UICollectionReusableView? {
+        let header = UICollectionView.elementKindSectionHeader
+        let empty = emptyCell(collectionView: collectionView, indexPath: indexPath, kind: header)
+        let model = settings[indexPath.section]
+        
+        guard let section = model.section.header, let reusableView = section.cell else { return empty }
+        let id = type(of: reusableView).cellId
+        let cell = collectionView.dequeueReusableSupplementaryView(ofKind: header, withReuseIdentifier: id, for: indexPath)
+        cell.semanticContentAttribute = .forceRightToLeft
+        reusableView.configure(cell: cell)
+        action.invoke(action: .headerVisible, cell: cell, configurator: reusableView, indexPath: indexPath)
+        return cell
+    
+    }
+    
+    func buildPagination(settings: [PowerItemViewModel], collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionReusableView? {
+        let footer = UICollectionView.elementKindSectionFooter
+        let empty = emptyCell(collectionView: collectionView, indexPath: indexPath, kind: footer)
+        let model = settings[indexPath.section]
+        
+        guard let section = model.section.pagination, let reusableView = section.cell else { return empty }
+        let id = type(of: reusableView).cellId
+        let cell = collectionView.dequeueReusableSupplementaryView(ofKind: footer, withReuseIdentifier: id, for: indexPath)
+        cell.semanticContentAttribute = .forceRightToLeft
+        reusableView.configure(cell: cell)
+        return cell
     }
     
     
@@ -45,29 +78,7 @@ private extension PowerHeaderFooterDiffableView {
 
 //MARK: - Section
 private extension PowerHeaderFooterDiffableView {
-    
-    func reusableViews(
-        settings: [PowerItemModel], collectionView: UICollectionView, isHeader: Bool, indexPath: IndexPath, kind: String,
-        action: PowerActionListProxy) -> UICollectionReusableView? {
-            
-            let empty = emptyCell(collectionView: collectionView, indexPath: indexPath, kind: kind)
-            let model = settings[indexPath.section]
-            let sectionType = isHeader ? model.section.header : model.section.footer
-            let isVisible = sectionType?.isVisible ?? true
-            switch isVisible {
-            case true:
-                guard let section = sectionType, let reusableView = section.cell else { return empty }
-                let id = type(of: reusableView).cellId
-                let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath)
-                cell.semanticContentAttribute = .forceRightToLeft
-                reusableView.configure(cell: cell)
-                action.invoke(action: isHeader ? .headerVisible : .footerVisible, cell: cell, configurator: reusableView, indexPath: indexPath)
-                return cell
-            case false:
-                return empty
-            }
-            
-        }
+
     
     func emptyCell(collectionView: UICollectionView, indexPath: IndexPath, kind: String) -> UICollectionReusableView {
         let cell = collectionView.dequeueReusableSupplementaryView(

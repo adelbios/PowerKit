@@ -62,7 +62,12 @@ open class PowerNetwork: NSObject {
         self.isReuestLoading = true
         self.status = .loading
         self.showLoadingViewAt(view)
-        self.completeRequest(target)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            print("Start Request")
+            self.completeRequest(target)
+        }
+       
+        
     }
     
     open func ignoreNetworkRequest() {
@@ -86,11 +91,18 @@ private extension PowerNetwork {
         } completion: { result in
             switch result {
             case .failure(let error):
+                print(error)
                 self.isReuestLoading = false
                 self.didRequestFailure(error)
             case .success(let response):
+                print(response.statusCode)
                 self.isReuestLoading = false
-                self.didResponseSuccess(response, target: target)
+                if response.statusCode != 200 {
+                    guard self.requestFailure(response.statusCode) == true else { return }
+                } else {
+                    self.didResponseSuccess(response, target: target)
+                }
+                
             }
         }
         

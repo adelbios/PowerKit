@@ -13,8 +13,8 @@ import SkeletonView
 
 class PowerDiffableDataSource<Section: Hashable, Item: Hashable>: UICollectionViewDiffableDataSource<Section, Item> {
     
-    private var registeredCells = [RegisteredCellsModel]()
     private var skeletoneCells = [RegisteredCellsModel]()
+    private var cells = [RegisteredCellsModel]()
     
     //MARK: - .init
     init(
@@ -22,7 +22,7 @@ class PowerDiffableDataSource<Section: Hashable, Item: Hashable>: UICollectionVi
         cellProvider: @escaping UICollectionViewDiffableDataSource<Section, Item>.CellProvider
     ) {
         super.init(collectionView: collectionView, cellProvider: cellProvider)
-        self.registeredCells = registeredCells
+        self.cells = registeredCells
         self.skeletoneCells = registeredCells.filter({ $0.skeletonCount > 0 })
         self.registerAllCellsUsing(collectionView)
     }
@@ -46,20 +46,11 @@ extension PowerDiffableDataSource: SkeletonCollectionViewDataSource {
     }
     
     func collectionSkeletonView(_ skeletonView: UICollectionView, supplementaryViewIdentifierOfKind: String, at indexPath: IndexPath) -> ReusableCellIdentifier? {
-        let section = skeletoneCells[indexPath.section]
-        switch supplementaryViewIdentifierOfKind {
-        case UICollectionView.elementKindSectionHeader:
-            guard let header = section.header, header.isSkeletonEnable == true else { return nil }
-            return header.cell.name
-        case UICollectionView.elementKindSectionFooter:
-            guard let footer = section.footer, footer.isSkeletonEnable == true else { return nil }
-            return footer.cell.name
-        default:
-            return nil
-        }
-        
+        print("ADEL")
+        let header = cells[indexPath.section]
+        return header.isHeader ? header.cell.name : nil
     }
-
+    
 }
 #endif
 
@@ -67,28 +58,20 @@ extension PowerDiffableDataSource: SkeletonCollectionViewDataSource {
 private extension PowerDiffableDataSource {
     
     func registerAllCellsUsing(_ collectionView: UICollectionView) {
-        collectionView.register(PowerEmptyCell.self)
-        registeredCells.forEach { setupCellUsing($0, collectionView: collectionView) }
-        addEmptyHeader(collectionView: collectionView)
+        cells.forEach { setupCellUsing($0, collectionView: collectionView) }
+        addEmptySections(collectionView: collectionView)
     }
     
     func setupCellUsing(_ model: RegisteredCellsModel, collectionView: UICollectionView) {
-        collectionView.register(model.cell, fromNib: model.fromNib)
-        
-        if let header = model.header?.cell {
-            collectionView.register(header, kind: .header, fromNib: model.fromNib)
-        }
-        
-        if let footer = model.footer?.cell {
-            collectionView.register(footer, kind: .footer, fromNib: model.fromNib)
-        }
-        
+        collectionView.register(model.cell)
+        guard model.isHeader == true else { return }
+        collectionView.register(model.cell, kind: .header)
     }
     
-    func addEmptyHeader(collectionView: UICollectionView) {
-        //This help me when loading content using skeleton View
+    func addEmptySections(collectionView: UICollectionView) {
         collectionView.register(UICollectionViewCell.self, kind: .header)
         collectionView.register(UICollectionViewCell.self, kind: .footer)
+        collectionView.register(PowerLoadMoreCell.self, kind: .footer)
     }
     
 }

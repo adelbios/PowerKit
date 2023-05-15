@@ -8,11 +8,11 @@
 import UIKit
 import SnapKit
 
-public class PowerEmptyView: PowerView  {
+public class PowerEmptyView: UIView {
     
     
     //MARK: - Variables
-    @Published open private(set) var isActionButtonClicked: Bool?
+    var didReloadButtonClicked: (() -> Void)?
     
     public enum LayoutPosition {
         case top, middle, bottom
@@ -139,9 +139,14 @@ public class PowerEmptyView: PowerView  {
     
     
     //MARK: - LifeCycle
-    public override func setupViews() {
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
         settings()
         setupUI()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     public override func layoutSubviews() {
@@ -218,7 +223,7 @@ private extension PowerEmptyView {
 extension PowerEmptyView {
     
     @objc private func didActionButtonClicked() {
-        self.isActionButtonClicked = true
+        self.didReloadButtonClicked?()
     }
     
     public func change(position: LayoutPosition, animated: Bool = false) {

@@ -28,26 +28,12 @@ internal extension UICollectionView {
     }
     
     
-    func register<T: UICollectionViewCell>(_ cell: T.Type, fromNib: Bool = false){
-        switch fromNib {
-        case true:
-            self.register(UINib(nibName: "\(cell)", bundle: Bundle.main), forCellWithReuseIdentifier: "\(cell)")
-        case false:
-            self.register(cell, forCellWithReuseIdentifier: "\(cell)")
-        }
+    func register<T: UICollectionViewCell>(_ cell: T.Type){
+        self.register(cell, forCellWithReuseIdentifier: "\(cell)")
     }
     
-    func register<T: UICollectionViewCell>(_ cell: T.Type, kind: ElementKind, fromNib: Bool = false){
-        switch fromNib {
-        case true:
-            self.register(
-                UINib(nibName: "\(cell)", bundle: Bundle.main),
-                forSupplementaryViewOfKind: kind.value,
-                withReuseIdentifier: "\(cell)"
-            )
-        case false:
-            self.register(cell, forSupplementaryViewOfKind: kind.value, withReuseIdentifier: "\(cell)")
-        }
+    func register<T: UICollectionViewCell>(_ cell: T.Type, kind: ElementKind){
+        self.register(cell, forSupplementaryViewOfKind: kind.value, withReuseIdentifier: "\(cell)")
     }
     
     func dequeue<T: UICollectionViewCell>(_ cell: T.Type, indexPath: IndexPath) -> T {
@@ -112,6 +98,11 @@ internal extension UICollectionView {
         self.deselectItem(at: IndexPath(item: index, section: 0), animated: animated)
     }
     
+    func isLastItemVisible(section: Int) -> Bool {
+        let numberOfItems = self.numberOfItems(inSection: section)
+        return indexPathsForVisibleItems.contains(where: { $0.item == numberOfItems - 2 })
+    }
+    
 }
 
 public extension NSCollectionLayoutSize {
@@ -129,3 +120,5 @@ public extension NSCollectionLayoutSize {
     }
     
 }
+
+
