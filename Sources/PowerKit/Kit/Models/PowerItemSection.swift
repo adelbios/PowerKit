@@ -13,16 +13,16 @@ public struct PowerItemSection: Hashable {
     //MARK: - Variables
     public var id: Int
     public var header: Section?
-    public var pagination: Pagination?
+    public var pagination: PaginationModel?
     
     //MARK: - .Init
-    public init(id: Int, header: Section? = nil, pagination: Pagination? = nil) {
+    public init(id: Int, header: Section? = nil, pagination: PaginationModel? = nil) {
         self.id = id
         self.header = header
         self.pagination = pagination
     }
     
-    mutating internal func addHeader(cell: PowerCells?, isAutoHeaderUpdate: Bool, pagination: Pagination?) {
+    mutating internal func addHeader(cell: PowerCells?, isAutoHeaderUpdate: Bool, pagination: PaginationModel?) {
         if let newCell = cell { updateHeader(cell: newCell, isAutoHeaderUpdate: isAutoHeaderUpdate) }
         if let page = pagination { self.pagination?.add(current: page.current ?? 1, total: page.total ?? 1) }
     }
@@ -76,7 +76,7 @@ public struct Section: Hashable {
 }
 
 //MARK: - Pagination
-public struct Pagination: Hashable {
+public struct PaginationModel: Hashable {
    
     public private(set) var isRequestMoreFire: Bool = false
     
@@ -105,7 +105,7 @@ public struct Pagination: Hashable {
          self.current = current
          self.total = total
          self.isRequestMoreFire = current <= total ? true : false
-         self.cell = PowerModel<PowerLoadMoreCell, Pagination>(item: .init(current: current, total: total))
+         self.cell = PowerModel<PowerLoadMoreCell, PaginationModel>(item: .init(current: current, total: total))
     }
     
 }

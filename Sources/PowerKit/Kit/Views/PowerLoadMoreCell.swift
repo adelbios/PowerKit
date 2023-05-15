@@ -7,7 +7,7 @@
 
 import UIKit
 
-class PowerLoadMoreCell: UICollectionViewCell {
+open class PowerLoadMoreCell: UICollectionViewCell {
     
     //MARK: - UI Variables
     lazy var activityIndicator: UIActivityIndicatorView = {
@@ -16,7 +16,7 @@ class PowerLoadMoreCell: UICollectionViewCell {
     }()
    
     //MARK: - LifeCycle
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -30,7 +30,7 @@ class PowerLoadMoreCell: UICollectionViewCell {
 //MARK: - PowerCellDelegate
 extension PowerLoadMoreCell: PowerCellDelegate {
     
-    func configure(data: Pagination) {
+   public func configure(data: PaginationModel) {
         let hasNextItem = data.isRequestMoreFire
         hasNextItem ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()
     }

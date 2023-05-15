@@ -12,13 +12,13 @@ public struct PowerAddNewModel {
     public let id: Int
     public let header: Section?
     public let isAutoHeaderUpdating: Bool
-    public let pagination: Pagination?
+    public let pagination: PaginationModel?
     public var items: [PowerCells]
     
     //MARK: - .Init
     public init(
         id: Int, header: Section? = nil, isAutoHeaderUpdating: Bool = true,
-        pagination: Pagination? = nil, items: [PowerCells]
+        pagination: PaginationModel? = nil, items: [PowerCells]
     ) {
         self.id = id
         self.header = header
