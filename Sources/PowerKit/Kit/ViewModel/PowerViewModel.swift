@@ -95,6 +95,8 @@ open class PowerViewModel<T: Codable>: NSObject {
     
     open func didPostResponse(data: Data) { }
     
+    open func didPostResponse(model: T, data: Data) { }
+    
     open func initViewModel() { }
     
     //MARK: - Requested func
@@ -215,7 +217,7 @@ private extension PowerViewModel {
                 case .get, .none:
                     self.didGetResponseSuccess(model: T.self, data: data)
                 case .post:
-                    self.didPostResponse(data: data)
+                    self.didPostResponseSuccessValue(model: T.self, data: data)
                 case .getPagination:
                     self.didGetResponseSuccess(model: T.self, data: data)
                 case .staticList:
@@ -231,6 +233,14 @@ private extension PowerViewModel {
             self.didFetchModels($0, data: data)
         }
     }
+    
+    func didPostResponseSuccessValue(model: T.Type, data: Data) {
+        json.implement(type: T.self, data: data){
+            self.didPostResponse(data: data)
+            self.didPostResponse(model: $0, data: data)
+        }
+    }
+    
     
     func observeNetworkError(){
         network.$networkErrorModel
