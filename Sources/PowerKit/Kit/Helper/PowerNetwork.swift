@@ -63,7 +63,6 @@ open class PowerNetwork: NSObject {
         self.status = .loading
         self.showLoadingViewAt(view)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            print("Start Request")
             self.completeRequest(target)
         }
        
@@ -95,7 +94,6 @@ private extension PowerNetwork {
                 self.isReuestLoading = false
                 self.didRequestFailure(error)
             case .success(let response):
-                print(response.statusCode)
                 self.isReuestLoading = false
                 if response.statusCode != 200 {
                     guard self.requestFailure(response.statusCode) == true else { return }
