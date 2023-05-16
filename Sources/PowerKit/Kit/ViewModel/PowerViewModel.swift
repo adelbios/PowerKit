@@ -64,7 +64,7 @@ open class PowerViewModel<T: Codable>: NSObject {
     //MARK: - LifeCycle
     required public override init() {
         super.init()
-        configureViewModelSettings()
+        initViewModel()
         didSuccessFetchData()
         handlePowerCellAction()
         observeNetworkError()
@@ -95,7 +95,7 @@ open class PowerViewModel<T: Codable>: NSObject {
     
     open func didPostResponse(data: Data) { }
     
-    @objc open dynamic func configureViewModelSettings() { }
+    open func initViewModel() { }
     
     //MARK: - Requested func
     open func makeHTTPRequest(){
