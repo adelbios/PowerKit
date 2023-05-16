@@ -17,8 +17,12 @@ public struct RegisteredCellsModel {
     //MARK: - .Init
     public init(_ cell: UICollectionViewCell.Type, skeletonCount: Int = 0, isHeader: Bool = false) {
         self.cell = cell
-        self.skeletonCount = skeletonCount
         self.isHeader = isHeader
+        if isHeader == true {
+            self.skeletonCount = 0
+        } else {
+            self.skeletonCount = skeletonCount
+        }
     }
     
 }
