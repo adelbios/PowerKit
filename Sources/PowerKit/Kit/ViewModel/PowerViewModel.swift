@@ -71,7 +71,7 @@ open class PowerViewModel<T: Codable>: NSObject {
         buildSettings()
     }
     
-    func set(viewController: UIViewController?, collectionView: UICollectionView?) {
+    open func set(viewController: UIViewController? = nil, collectionView: UICollectionView? = nil) {
         self.viewController = viewController
         self.collectionView = collectionView
     }
