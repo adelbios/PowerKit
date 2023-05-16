@@ -51,7 +51,9 @@ internal extension PowerDataViewModel {
     func addNew(settings: [PowerItemViewModel], addNewModel: PowerAddNewModel) {
         settings[addNewModel.id].append(model: addNewModel, isPaginationRequested: isPaginationRequested)
         self.delegate?.didInsertNewItems()
-        self.delegate?.didHeaderUpdated(section: addNewModel.id)
+        if isPaginationRequested == false {
+            self.delegate?.didHeaderUpdated(section: addNewModel.id)
+        }
         setEmpty(settings: settings)
     }
     
@@ -60,6 +62,7 @@ internal extension PowerDataViewModel {
         self.delegate?.didInsertNewItems()
         if groups.count == 1 {
             guard let id = groups.first?.id else { return }
+            guard isPaginationRequested == false else { return }
             self.delegate?.didHeaderUpdated(section: id)
         }
         setEmpty(settings: settings)
