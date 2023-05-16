@@ -46,6 +46,7 @@ extension PowerDiffableDataSource: SkeletonCollectionViewDataSource {
     }
     
     func collectionSkeletonView(_ skeletonView: UICollectionView, supplementaryViewIdentifierOfKind: String, at indexPath: IndexPath) -> ReusableCellIdentifier? {
+        guard supplementaryViewIdentifierOfKind == UICollectionView.elementKindSectionHeader else { return nil }
         let header = cells[indexPath.section]
         return header.isHeader ? header.cell.name : nil
     }
