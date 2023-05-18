@@ -36,6 +36,11 @@ internal extension UICollectionView {
         self.register(cell, forSupplementaryViewOfKind: kind.value, withReuseIdentifier: "\(cell)")
     }
     
+    func register<T: UICollectionViewCell>(_ cell: T.Type, kind: String){
+        self.register(cell, forSupplementaryViewOfKind: kind, withReuseIdentifier: "\(cell)")
+    }
+    
+    
     func dequeue<T: UICollectionViewCell>(_ cell: T.Type, indexPath: IndexPath) -> T {
         return self.dequeueReusableCell(withReuseIdentifier: "\(cell)", for: indexPath) as! T
     }
