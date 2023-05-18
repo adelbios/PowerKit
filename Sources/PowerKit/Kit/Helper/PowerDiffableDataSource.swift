@@ -63,9 +63,15 @@ private extension PowerDiffableDataSource {
     }
     
     func setupCellUsing(_ model: RegisteredCellsModel, collectionView: UICollectionView) {
-        collectionView.register(model.cell)
-        guard model.isHeader == true else { return }
-        collectionView.register(model.cell, kind: model.kind)
+        switch model.isHeader {
+        case true:
+            print(model.kind)
+            collectionView.register(model.cell, kind: model.kind)
+        case false:
+            print(model.cell)
+            collectionView.register(model.cell)
+        }
+        
     }
     
     func addEmptySections(collectionView: UICollectionView) {
