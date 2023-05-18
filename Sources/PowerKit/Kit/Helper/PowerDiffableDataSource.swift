@@ -67,6 +67,7 @@ private extension PowerDiffableDataSource {
         case true:
             print(model.kind)
             collectionView.register(model.cell, kind: model.kind)
+            collectionView.register(UICollectionViewCell.self, kind: model.kind)
         case false:
             print(model.cell)
             collectionView.register(model.cell)
