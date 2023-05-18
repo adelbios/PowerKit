@@ -30,10 +30,10 @@ private extension PowerHeaderFooterDiffableView {
     
     func configure(settings: [PowerItemViewModel], collectionView: UICollectionView, indexPath: IndexPath, kind: String,
                    action: PowerActionListProxy) -> UICollectionReusableView? {
-        
-        
+        let model = settings[indexPath.section]
+        print(model.section.header?.kind)
         switch kind {
-        case UICollectionView.elementKindSectionHeader:
+        case model.section.header?.kind:
             return buildHeader(settings: settings, collectionView: collectionView, indexPath: indexPath, action: action)
         case UICollectionView.elementKindSectionFooter:
             return buildPagination(settings: settings, collectionView: collectionView, indexPath: indexPath)
@@ -50,7 +50,6 @@ private extension PowerHeaderFooterDiffableView {
         let model = settings[indexPath.section]
         guard let section = model.section.header, let reusableView = section.cell else { return empty }
         let id = type(of: reusableView).cellId
-        print(section.kind)
         let cell = collectionView.dequeueReusableSupplementaryView(ofKind: section.kind, withReuseIdentifier: id, for: indexPath)
         cell.semanticContentAttribute = .forceRightToLeft
         reusableView.configure(cell: cell)
