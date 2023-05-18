@@ -47,11 +47,14 @@ public struct Section: Hashable {
     internal var cell: PowerCells?
     internal var size: NSCollectionLayoutSize
     internal var pinToTop: Bool
+    internal var kind: String
     
     //MARK: - .Init
-    public init(size: NSCollectionLayoutSize = .dynamic(estimatedValue: 50), pinToTop: Bool = false) {
+    public init(size: NSCollectionLayoutSize = .dynamic(estimatedValue: 50), pinToTop: Bool = false,
+                kind: String = UICollectionView.elementKindSectionHeader) {
         self.size = size
         self.pinToTop = pinToTop
+        self.kind = kind
     }
     
     //MARK: - .Init
