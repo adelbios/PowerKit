@@ -78,7 +78,7 @@ private extension PowerItemViewModel {
     
     func createSection(_ model: Section?) {
         guard let model else { return }
-        let kind = UICollectionView.elementKindSectionHeader
+        let kind = model.kind
         let sec = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: model.size, elementKind: kind, alignment: .top)
         sec.pinToVisibleBounds = model.pinToTop
         layout.boundarySupplementaryItems.append(sec)
