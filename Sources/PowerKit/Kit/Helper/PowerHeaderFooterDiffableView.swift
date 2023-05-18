@@ -45,10 +45,10 @@ private extension PowerHeaderFooterDiffableView {
     
     
     func buildHeader(settings: [PowerItemViewModel], collectionView: UICollectionView, indexPath: IndexPath, action: PowerActionListProxy) -> UICollectionReusableView? {
-        let header = UICollectionView.elementKindSectionHeader
+        let header = UICollectionView.elementKindSectionHeader + UUID().uuidString
         let empty = emptyCell(collectionView: collectionView, indexPath: indexPath, kind: header)
         let model = settings[indexPath.section]
-        
+        print(header, "Kind")
         guard let section = model.section.header, let reusableView = section.cell else { return empty }
         let id = type(of: reusableView).cellId
         let cell = collectionView.dequeueReusableSupplementaryView(ofKind: header, withReuseIdentifier: id, for: indexPath)
