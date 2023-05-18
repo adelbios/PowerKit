@@ -31,7 +31,7 @@ private extension PowerHeaderFooterDiffableView {
     func configure(settings: [PowerItemViewModel], collectionView: UICollectionView, indexPath: IndexPath, kind: String,
                    action: PowerActionListProxy) -> UICollectionReusableView? {
         let model = settings[indexPath.section]
-        print(model.section.header?.kind)
+        print(model.section.header?.kind, "Diffable")
         switch kind {
         case model.section.header?.kind:
             return buildHeader(settings: settings, collectionView: collectionView, indexPath: indexPath, action: action)
