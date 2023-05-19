@@ -31,11 +31,21 @@ private extension PowerHeaderFooterDiffableView {
     func configure(settings: [PowerItemViewModel], collectionView: UICollectionView, indexPath: IndexPath, kind: String,
                    action: PowerActionListProxy) -> UICollectionReusableView? {
         let model = settings[indexPath.section]
+        let kindFooter0 = "\(UICollectionView.elementKindSectionFooter)0"
+        let kindFooter1 = "\(UICollectionView.elementKindSectionFooter)1"
         switch kind {
         case model.section.header!.kind:
             return buildHeader(settings: settings, collectionView: collectionView, indexPath: indexPath, action: action)
-        case UICollectionView.elementKindSectionFooter:
-            return buildPagination(settings: settings, collectionView: collectionView, indexPath: indexPath)
+        case kindFooter0:
+            return buildPagination(
+                settings: settings, collectionView: collectionView, indexPath: indexPath, kind: kindFooter0
+            )
+            
+        case kindFooter1:
+            return buildPagination(
+                settings: settings, collectionView: collectionView, indexPath: indexPath, kind: kindFooter1
+            )
+            
         default:
             return emptyCell(collectionView: collectionView, indexPath: indexPath, kind: kind)
         }
@@ -57,14 +67,13 @@ private extension PowerHeaderFooterDiffableView {
     
     }
     
-    func buildPagination(settings: [PowerItemViewModel], collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionReusableView? {
+    func buildPagination(settings: [PowerItemViewModel], collectionView: UICollectionView, indexPath: IndexPath, kind: String) -> UICollectionReusableView? {
         let footer = UICollectionView.elementKindSectionFooter
         let empty = emptyCell(collectionView: collectionView, indexPath: indexPath, kind: footer)
         let model = settings[indexPath.section]
-        
         guard let section = model.section.pagination, let reusableView = section.cell else { return empty }
         let id = type(of: reusableView).cellId
-        let cell = collectionView.dequeueReusableSupplementaryView(ofKind: footer, withReuseIdentifier: id, for: indexPath)
+        let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath)
         cell.semanticContentAttribute = .forceRightToLeft
         reusableView.configure(cell: cell)
         return cell

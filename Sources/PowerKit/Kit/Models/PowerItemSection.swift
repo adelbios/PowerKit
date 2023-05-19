@@ -83,11 +83,11 @@ public struct PaginationModel: Hashable {
    
     public private(set) var isRequestMoreFire: Bool = false
     
+    internal private(set) var current: Int?
+    
     internal var size: NSCollectionLayoutSize
     
     internal var cell: PowerCells?
-    
-    public private(set) var current: Int?
     
     internal private(set) var total: Int?
     
