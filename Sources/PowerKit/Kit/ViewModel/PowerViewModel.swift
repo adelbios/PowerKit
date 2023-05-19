@@ -102,6 +102,10 @@ open class PowerViewModel<T: Codable>: NSObject {
         self.requestType = .getPagination
     }
     
+    open func fetchNextPaging(section: Int){
+        self.requestType = .getPagination
+    }
+    
     open func postRequestAt(_ view: UIView) {
         self.requestType = .post
     }

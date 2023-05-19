@@ -131,6 +131,7 @@ private extension PowerViewController {
         guard collectionView.isLastItemVisible(section: section) == true else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
             guard let self = self else { return }
+            self.viewModel.fetchNextPaging(section: section)
             self.viewModel.fetchNextPaging()
         }
     }
