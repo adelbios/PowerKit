@@ -68,6 +68,7 @@ private extension PowerHeaderFooterDiffableView {
     }
     
     func buildPagination(settings: [PowerItemViewModel], collectionView: UICollectionView, indexPath: IndexPath, kind: String) -> UICollectionReusableView? {
+        print(kind, "Section -> \(indexPath.section)")
         let footer = UICollectionView.elementKindSectionFooter
         let empty = emptyCell(collectionView: collectionView, indexPath: indexPath, kind: footer)
         let model = settings[indexPath.section]

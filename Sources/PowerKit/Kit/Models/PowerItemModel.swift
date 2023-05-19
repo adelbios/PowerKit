@@ -86,10 +86,11 @@ private extension PowerItemViewModel {
     
     func createPagination(_ model: PaginationModel?) {
         guard let model else { return }
-        let kind0 = "\(UICollectionView.elementKindSectionFooter)0"
-        let kind1 = "\(UICollectionView.elementKindSectionFooter)1"
+        let kind0 = "\(UICollectionView.elementKindSectionFooter)1"
+        let kind1 = "\(UICollectionView.elementKindSectionFooter)2"
         let kind = section.id == 0 ? kind0 : kind1
         let sec = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: model.size, elementKind: kind, alignment: .bottom)
+        print(layout.boundarySupplementaryItems, "createPagination")
         layout.boundarySupplementaryItems.append(sec)
     }
     

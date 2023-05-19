@@ -79,6 +79,9 @@ private extension PowerDiffableDataSource {
         collectionView.register(PowerLoadMoreCell.self, kind: .footer)
         collectionView.register(PowerLoadMoreCell.self, kind: "\(UICollectionView.elementKindSectionFooter)1")
         collectionView.register(PowerLoadMoreCell.self, kind: "\(UICollectionView.elementKindSectionFooter)2")
+        collectionView.register(UICollectionViewCell.self, kind: "\(UICollectionView.elementKindSectionFooter)1")
+        collectionView.register(UICollectionViewCell.self, kind: "\(UICollectionView.elementKindSectionFooter)2")
+        
     }
     
 }
