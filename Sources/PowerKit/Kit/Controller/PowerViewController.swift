@@ -306,14 +306,14 @@ extension PowerViewController {
 }
 
 //MARK: - DownloadContentStyle
-private extension PowerViewController {
+extension PowerViewController {
     
-    func setDwonloadContentStyle() {
+    public func setDwonloadContentStyle() {
         collectionView.setBackground(mode: .loading)
         collectionView.startSkeleton()
     }
     
-    func endDownloadContentStyle() {
+    public func endDownloadContentStyle() {
         collectionView.stopSkeleton()
     }
     
