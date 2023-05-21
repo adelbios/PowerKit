@@ -341,7 +341,6 @@ extension PowerViewController: PowerDataViewModelDelegate {
             case false:
                 snapshot.appendItems($0.cells, toSection: $0.section.id)
             }
-            
         }
         
         let animation = self.viewModel.requestType == .getPagination ? false : true

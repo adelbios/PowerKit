@@ -46,6 +46,7 @@ internal extension PowerItemViewModel {
         let header = model.header?.cell
         let pagination = model.pagination
         section.addHeader(cell: header, isAutoHeaderUpdate: model.isAutoHeaderUpdating, pagination: pagination)
+        updateEmpty(new: model.emptyCell)
         switch isPaginationRequested {
         case true:
             model.items.forEach { self.cells.append($0) }
@@ -57,6 +58,11 @@ internal extension PowerItemViewModel {
     
     func updateHeader(newHeader: Section) {
         self.section.addHeader(cell: newHeader.cell, isAutoHeaderUpdate: true, pagination: nil)
+    }
+    
+    func updateEmpty(new: PowerCells?) {
+        guard let newCell = new else { return }
+        self.emptyCell = newCell
     }
     
     func removeSection() {

@@ -49,7 +49,8 @@ internal class PowerDataViewModel {
 internal extension PowerDataViewModel {
     
     func addNew(settings: [PowerItemViewModel], addNewModel: PowerAddNewModel) {
-        settings[addNewModel.id].append(model: addNewModel, isPaginationRequested: isPaginationRequested)
+        guard let first = settings.first(where: { $0.section.id == addNewModel.id }) else { return }
+        first.append(model: addNewModel, isPaginationRequested: isPaginationRequested)
         self.delegate?.didInsertNewItems()
         if isPaginationRequested == false {
             self.delegate?.didHeaderUpdated(section: addNewModel.id)
@@ -58,7 +59,10 @@ internal extension PowerDataViewModel {
     }
     
     func addNewGroup(settings: [PowerItemViewModel], groups: [PowerAddNewModel]) {
-        groups.forEach { settings[$0.id].append(model: $0, isPaginationRequested: isPaginationRequested) }
+        groups.forEach { group in
+            guard let first = settings.first(where: { $0.section.id == group.id }) else { return }
+            first.append(model: group, isPaginationRequested: isPaginationRequested)
+        }
         self.delegate?.didInsertNewItems()
         if groups.count == 1 {
             guard let id = groups.first?.id else { return }
@@ -75,7 +79,8 @@ internal extension PowerDataViewModel {
 internal extension PowerDataViewModel {
 
     func update(settings: [PowerItemViewModel], id: Int, header: Section) {
-        settings[id].updateHeader(newHeader: header)
+        guard let first = settings.first(where: { $0.section.id == id }) else { return }
+        first.updateHeader(newHeader: header)
         self.delegate?.didHeaderUpdated(section: id)
     }
     
@@ -89,19 +94,22 @@ internal extension PowerDataViewModel {
 internal extension PowerDataViewModel {
     
     func removeItemAt(indexPath: IndexPath, settings: [PowerItemViewModel]) {
-        let _ = settings[indexPath.section].removeAt(index: indexPath.item)
+        guard let first = settings.first(where: { $0.section.id == indexPath.section }) else { return }
+        let _ = first.removeAt(index: indexPath.item)
         self.delegate?.didRemoveItemAt(indexPath: indexPath)
         setEmpty(settings: settings)
     }
     
     func removeSection(section: Int, settings: [PowerItemViewModel]) {
-        settings[section].removeSection()
+        guard let first = settings.first(where: { $0.section.id == section }) else { return }
+        first.removeSection()
         self.delegate?.didRemoveSection(section)
         setEmpty(settings: settings)
     }
     
     func remove(cell: PowerCells, section: Int, settings: [PowerItemViewModel]) {
-        settings[section].remove(cell: cell)
+        guard let first = settings.first(where: { $0.section.id == section }) else { return }
+        first.remove(cell: cell)
         self.delegate?.didRemove(cell: cell)
         setEmpty(settings: settings)
     }
