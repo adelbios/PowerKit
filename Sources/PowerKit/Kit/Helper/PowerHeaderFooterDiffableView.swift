@@ -33,9 +33,9 @@ private extension PowerHeaderFooterDiffableView {
         let model = settings[indexPath.section]
         let kindFooter0 = "\(UICollectionView.elementKindSectionFooter)1"
         let kindFooter1 = "\(UICollectionView.elementKindSectionFooter)2"
-        guard kind.isEmpty == false else { return emptyCell(collectionView: collectionView, indexPath: indexPath, kind: kindFooter0) }
+        let headerKind = model.section.header?.kind ?? UICollectionView.elementKindSectionHeader
         switch kind {
-        case model.section.header!.kind:
+        case headerKind:
             return buildHeader(settings: settings, collectionView: collectionView, indexPath: indexPath, action: action)
         case kindFooter0:
             return buildPagination(
