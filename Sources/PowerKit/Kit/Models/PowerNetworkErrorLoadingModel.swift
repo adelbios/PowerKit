@@ -14,6 +14,10 @@ public struct PowerNetworkErrorLoadingModel {
     
     public let statusCode: Int
     
+    public init(statusCode: Int) {
+        self.statusCode = statusCode
+    }
+    
     public enum NetworkError: Int, Error {
         case noInternet = 6
         case badRequest = 400
