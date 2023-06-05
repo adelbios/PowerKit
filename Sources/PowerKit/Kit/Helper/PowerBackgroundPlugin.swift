@@ -13,7 +13,7 @@ open class PowerBackgroundPlugin : PluginType {
     var bgTask : UIBackgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
     var numInFlight = 0
 
-    func prepare(_ request: URLRequest, target: TargetType) -> URLRequest {
+    public func prepare(_ request: URLRequest, target: TargetType) -> URLRequest {
         if numInFlight == 0 {
             bgTask = UIApplication.shared.beginBackgroundTask(withName: "Moya bg plugin") {
                 if self.bgTask != UIBackgroundTaskIdentifier.invalid {
@@ -27,7 +27,7 @@ open class PowerBackgroundPlugin : PluginType {
         return request
     }
 
-    func didReceive(_ result: Result<Response, MoyaError>, target: TargetType) {
+    public func didReceive(_ result: Result<Response, MoyaError>, target: TargetType) {
         numInFlight -= 1
         if (numInFlight <= 0) {
             UIApplication.shared.endBackgroundTask(self.bgTask)
