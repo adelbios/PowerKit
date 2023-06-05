@@ -8,7 +8,7 @@
 import UIKit
 import Moya
 
-class PowerBackgroundPlugin : PluginType {
+open class PowerBackgroundPlugin : PluginType {
     
     var bgTask : UIBackgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
     var numInFlight = 0
