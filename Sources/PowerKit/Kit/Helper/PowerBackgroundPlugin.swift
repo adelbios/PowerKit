@@ -12,6 +12,9 @@ open class PowerBackgroundPlugin : PluginType {
     
     var bgTask : UIBackgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
     var numInFlight = 0
+    
+    public init() {
+    }
 
     public func prepare(_ request: URLRequest, target: TargetType) -> URLRequest {
         if numInFlight == 0 {
