@@ -7,9 +7,9 @@
 
 import UIKit
 import Combine
+import SwiftUI
 
-
-open class PowerViewModel<T: Codable>: NSObject {
+open class PowerViewModel<T: Codable>: ObservableObject {
     
     //NEW
     public enum RequestType {
