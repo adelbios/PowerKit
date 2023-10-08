@@ -56,9 +56,16 @@ open class PowerViewModel<T: Codable>: NSObject {
         return false
     }
     
+    open var isUploadingRequest: Bool {
+        return false
+    }
+    
     open lazy var network: PowerNetwork = {
-        let network = PowerNetwork(subscription: self.subscription, isLoadingInBackground: isRequestingInBackground)
-        return network
+        return PowerNetwork(
+            subscription: self.subscription,
+            isUploadingRequest: isUploadingRequest,
+            isLoadingInBackground: isRequestingInBackground
+        )
     }()
     
     //MARK: - LifeCycle

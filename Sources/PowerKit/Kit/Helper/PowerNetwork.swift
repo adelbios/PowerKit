@@ -25,6 +25,8 @@ open class PowerNetwork: NSObject {
     
     private var isLoadingInBackground: Bool = false
     
+    private var isUploadingRequest: Bool = false
+    
     private let loadingView = JGProgressHUD(style: .extraLight)
     
     private var printResultOut: Bool = true
@@ -35,8 +37,10 @@ open class PowerNetwork: NSObject {
     
     private lazy var provider: MoyaProvider<MultiTarget> = {
         let configuration = URLSessionConfiguration.default
+        if isUploadingRequest {
             configuration.timeoutIntervalForRequest = 60 * 5
             configuration.timeoutIntervalForResource = 60 * 5
+        }
         let alamoFireManager = Alamofire.Session(configuration: configuration)
         let provider = MoyaProvider<MultiTarget>(
             session: alamoFireManager,
@@ -58,9 +62,12 @@ open class PowerNetwork: NSObject {
     
     
     //MARK: - LifeCycle
-    init(subscription: Set<AnyCancellable>, isLoadingInBackground: Bool) {
+    init(subscription: Set<AnyCancellable>,
+         isUploadingRequest: Bool, isLoadingInBackground: Bool
+    ) {
         super.init()
         self.subscription = subscription
+        self.isUploadingRequest = true
         self.isLoadingInBackground = isLoadingInBackground
     }
     
