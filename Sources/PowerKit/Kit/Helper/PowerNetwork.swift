@@ -9,6 +9,7 @@ import UIKit
 import JGProgressHUD
 import Moya
 import Combine
+import Alamofire
 
 private struct ErrorModel: Codable {
     let success: Bool?
@@ -33,7 +34,13 @@ open class PowerNetwork: NSObject {
     private var previousRequest: Moya.Cancellable?
     
     private lazy var provider: MoyaProvider<MultiTarget> = {
-        let provider = MoyaProvider<MultiTarget>(plugins: isLoadingInBackground ? [PowerBackgroundPlugin()] : [])
+        let configuration = URLSessionConfiguration.default
+            configuration.timeoutIntervalForRequest = 60 * 5
+        let alamoFireManager = Alamofire.Session(configuration: configuration)
+        let provider = MoyaProvider<MultiTarget>(
+            session: alamoFireManager,
+            plugins: isLoadingInBackground ? [PowerBackgroundPlugin()] : []
+        )
         return provider
     }()
     
