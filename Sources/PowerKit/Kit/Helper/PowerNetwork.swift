@@ -36,6 +36,7 @@ open class PowerNetwork: NSObject {
     private lazy var provider: MoyaProvider<MultiTarget> = {
         let configuration = URLSessionConfiguration.default
             configuration.timeoutIntervalForRequest = 60 * 5
+            configuration.timeoutIntervalForResource = 60 * 5
         let alamoFireManager = Alamofire.Session(configuration: configuration)
         let provider = MoyaProvider<MultiTarget>(
             session: alamoFireManager,
