@@ -13,8 +13,10 @@ import UIKit
 public struct PowerNetworkErrorLoadingModel {
     
     public let statusCode: Int
+    private let customMessage: String
     
-    public init(statusCode: Int) {
+    public init(statusCode: Int, message: String = "") {
+        self.customMessage = message
         self.statusCode = statusCode
     }
     
@@ -32,6 +34,7 @@ public struct PowerNetworkErrorLoadingModel {
         case undefined = -1
         case noError = 200
         case dataCorrupted = 9999
+        case webservice = 57716
         
     }
     
@@ -84,7 +87,8 @@ public struct PowerNetworkErrorLoadingModel {
             return "تنسيق البيانات غير صحيح"
         case .undefined:
             return "\(statusCode) - خطأ غير معرف"
-            
+        case .webservice:
+            return "\(statusCode) - خطأ في النطام"
         }
     }
     
@@ -95,10 +99,16 @@ public struct PowerNetworkErrorLoadingModel {
             return "يبدو انه لايوجد إتصال بالإنترنت تاكد من اتصالك من خلال الشبكة الخلوية او شبكة WI-FI"
         case .dataCorrupted:
             return "يبدو ان البيانات القادمة من الخادم ذات تنسيق غير صالح، حاول إعادة الطلب مره اخرى او قم بالتواصل مع الدعم الفني"
+        case .webservice:
+            return customMessage.isEmpty ? defualtMessage() : customMessage
         default:
-            return "نأسف منك، يوجد خطأ ما ولايمكن الوصول للصفحة اللتي تم طلبها حاول مره اخرى او قم بالتواصل مع الدعم الفني"
+            return defualtMessage()
 
         }
+    }
+    
+    private func defualtMessage() -> String {
+        return "نأسف منك، يوجد خطأ ما ولايمكن الوصول للصفحة اللتي تم طلبها حاول مره اخرى او قم بالتواصل مع الدعم الفني"
     }
     
 }
