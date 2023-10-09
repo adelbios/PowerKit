@@ -62,7 +62,7 @@ open class PowerNetwork: NSObject {
     
     
     //MARK: - LifeCycle
-    init(subscription: Set<AnyCancellable>,
+    public init(subscription: Set<AnyCancellable>,
          isUploadingRequest: Bool, isLoadingInBackground: Bool
     ) {
         super.init()
