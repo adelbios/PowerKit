@@ -100,6 +100,22 @@ open class PowerViewController<U: Any, Z: PowerViewModel<U>>: UIViewController, 
         setupConstraint(padding: padding)
     }
     
+    open func setErroView(title: String, msg: String) {
+        guard isDataSourceEmpty == true else { return }
+        collectionView.setBackground(mode: .error)
+        guard var snapshot = self.diffableDataSource?.snapshot() else { return }
+        snapshot.deleteAllItems()
+        apply(snapshot: snapshot, animated: false)
+        collectionView.emptyView.configure(
+            viewType: .network,
+            layoutPosition: .middle,
+            title: title,
+            message: msg,
+            actionButtonTitle: "إعادة تحميل الصفحة"
+        )
+        
+    }
+    
 }
 
 //MARK: - Settings
